@@ -1,11 +1,12 @@
-package com.hotel.booking;
+package src;
+import enums.ReservationStatus;
 
 public class Invoice {
     private int invoiceID;
     private Reservation reservation;
     private double amount;
     private boolean isPaid;
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     public Invoice(int invoiceID, Reservation reservation) {
         this.invoiceID = invoiceID;
@@ -13,9 +14,19 @@ public class Invoice {
         this.amount = reservation.calculateTotalCost();
         this.isPaid = false;
     }
+    public void markAsPaid(){
+        this.isPaid = true;
+        System.out.println("Invoice no. " + invoiceID + "has been paid. ");
+    }
+
+    public processPayment(PaymentMethod method)
+    {
+        markAsPaid();
+        System.out.println("PAYMENT METHOD: "+ paymentMethod);
+    }
 
     public void printInvoice() {
-        System.out.println("--- Hotel Invoice ---");
+        System.out.println("--- Hoqtel Invoice ---");
         System.out.println("Guest: " + reservation.getGuest().getUsername());
         System.out.println("Total Amount: $" + amount);
         System.out.println("Status: " + (isPaid ? "Paid" : "Unpaid"));

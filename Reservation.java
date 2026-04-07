@@ -1,7 +1,5 @@
-package com.hotel.booking;
-import com.hotel.enums.ReservationStatus;
-import com.hotel.models.Guest;
-import com.hotel.models.Room;
+package src;
+import enums.ReservationStatus;
 
 
 import java.time.LocalDate;
@@ -18,14 +16,14 @@ public class Reservation {
 
 
     //constructor:
-    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate, ReservationStatus status)
+    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate)
     {
         this.reservationID = reservationID;
         this.guest = guest;
         this.room = room;
         this. checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.status = status;
+        this.status = ReservationStatus.PENDING;
 
 
 
@@ -39,15 +37,31 @@ public class Reservation {
     public double calculateTotalCost()
     {
         return calculateDuration()*room.getRoomType().getPricePerNight();
+    } //price per night is determined by room type
+
+
+
+
+    public boolean overlapsWith(LocalDate newStart , LocalDate newEnd)
+    {
+        if (newStart.isBefore(this.checkOutDate)&& newEnd.isAfter(this.checkInDate))
+            return true;
+    }
+
+//getters
+    public int getReservationID() {
+        return reservationID;
     }
 
     public ReservationStatus getStatus()
     {
         return status;
     }
-    public void setStatus(ReservationStatus status)
+
+    //update reservation status
+    public void setStatus(ReservationStatus newStatus)
     {
-        this.status = status;
+        this.status = newStatus;
     }
 
 
