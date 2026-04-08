@@ -41,11 +41,14 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+<<<<<<< HEAD
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\abdur\IdeaProjects\hotel-reservation-system" />
     </key>
   </component>
+=======
+>>>>>>> feature/database-uml
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="7538afd7-c116-4339-82b1-2be0dd4e37d4" name="Changes" comment="" />
@@ -54,7 +57,11 @@
       <option name="presentableId" value="Default" />
       <updated>1775620282668</updated>
       <workItem from="1775620307671" duration="43000" />
+<<<<<<< HEAD
       <workItem from="1775642348892" duration="1414000" />
+=======
+      <workItem from="1775642348892" duration="1031000" />
+>>>>>>> feature/database-uml
     </task>
     <servers />
   </component>
