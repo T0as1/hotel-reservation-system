@@ -1,5 +1,6 @@
 import enums.Gender;
 import interfaces.Payable;
+import org.w3c.dom.ls.LSOutput;
 
 import java.time.LocalDate;
 
@@ -23,6 +24,12 @@ public class Guest implements Payable {
         this.username = username;
     }
 
+    //password setter
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -36,7 +43,7 @@ public class Guest implements Payable {
     }
 
     public void setBalance(double balance) {
-        this.balance = balance;
+         this.balance = balance;
     }
 
     public String getAddress() {
@@ -63,10 +70,20 @@ public class Guest implements Payable {
         this.roomPreferences = roomPreferences;
     }
 
+    // get invoice amount and deduct from balance, handle balance exceptions
     @Override
-    public boolean pay(double amount) {
-        // get invoice amount and deduct from balance, handle balance exceptions
+    public boolean pay(double amount) throws InvalidAmountException, InsufficientBalanceException  {
+        if(amount <= 0){
+            throw new InvalidAmountException("Amount must be positive");
+        }
+        if(this.balance < amount){
+            throw new InsufficientBalanceException("Balance is insufficient");
+        }
+        this.balance = this.balance - amount;
+        return true;
+    }
 
-        return false; //logic not implemented yet
+    public boolean Register(String username,String password, LocalDate dob, String address, Gender gender){
+        return false;
     }
 }
