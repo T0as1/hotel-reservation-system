@@ -20,22 +20,30 @@ public class Guest implements Payable {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String username) throws EmptyUserNameException {
         this.username = username;
+        if (username.isBlank()) {
+           throw new EmptyUserNameException("Username cannot be empty");
+        }
     }
 
     //password setter
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws EmptyPasswordException {
         this.password = password;
+        if (password.isBlank()) {
+            throw new EmptyPasswordException("Password cannot be empty");
+        }
     }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) throws dobException {
         this.dateOfBirth = dateOfBirth;
+        if (dateOfBirth.getYear() < 1900 || dateOfBirth.getYear() > 2026)
+            throw new dobException("Date of birth is invalid");
     }
 
     public double getBalance() {
@@ -84,6 +92,12 @@ public class Guest implements Payable {
     }
 
     public boolean Register(String username,String password, LocalDate dob, String address, Gender gender){
-        return false;
+        this.setUsername(username);
+        this.setPassword(password);
+        this.setDateOfBirth(dob);
+        this.setAddress(address);
+        this.setGender(gender);
+        // adding guest should be called here
+        return true;
     }
 }
