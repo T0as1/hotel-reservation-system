@@ -1,7 +1,6 @@
+package models;
 import enums.Role;
-import String;
 import java.time.LocalDate;
-package enums.Role;
 public abstract class Staff {
     private String username;
     private String password;
@@ -61,7 +60,7 @@ public abstract class Staff {
     }
 
     public void setUsername(String username) {
-        if(username==null){
+        if(username==null || username.trim().isEmpty()){
             throw new IllegalArgumentException("Username cannot be null ");
         }
         else {
