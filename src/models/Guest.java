@@ -3,7 +3,7 @@ package models;
 import exceptions.*;
 import enums.Gender;
 import interfaces.Payable;
-import org.w3c.dom.ls.LSOutput;
+
 import java.time.LocalDate;
 
 public class Guest implements Payable {
@@ -24,18 +24,17 @@ public class Guest implements Payable {
 
     public void setUsername(String username) throws EmptyUserNameException {
         this.username = username;
-        if (username.isBlank()) {
+        if (username == null || username.isBlank()) {
             throw new EmptyUserNameException("Username cannot be empty");
         }
     }
 
-    //password setter
+    //password setter, when called in main, password requirements
+    //must appear to the user BEFORE writing the password
 
-    public void setPassword(String password) throws EmptyPasswordException {
+    public void setPassword(String password) throws InvalidPasswordException {
         this.password = password;
-        if (password.isBlank()) {
-            throw new EmptyPasswordException("Password cannot be empty");
-        }
+        validatePassword(password);
     }
 
     public LocalDate getDateOfBirth() {
@@ -44,8 +43,8 @@ public class Guest implements Payable {
 
     public void setDateOfBirth(LocalDate dateOfBirth) throws dobException {
         this.dateOfBirth = dateOfBirth;
-        if (dateOfBirth.getYear() < 1900 || dateOfBirth.getYear() > 2026)
-            throw new dobException("Date of birth is invalid");
+        if (dateOfBirth.getYear() < 1900 || dateOfBirth.getYear() > 2008)
+            throw new dobException("Date of birth is invalid, only 18+ are allowed");
     }
 
     public double getBalance() {
@@ -93,7 +92,41 @@ public class Guest implements Payable {
         return true;
     }
 
-    public boolean Register(String username,String password, LocalDate dob, String address, Gender gender){
+    private void validatePassword (String p) throws InvalidPasswordException{
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+        boolean hasLetter = false;
+
+        if (p == null || p.isBlank()) {
+            throw new InvalidPasswordException("Password cannot be empty");
+        }
+        if (p.length() < 5){
+            throw new InvalidPasswordException("Password must contain at least 5 characters");
+        }
+        for(char c: p.toCharArray()){
+            if(Character.isLetter(c)){
+                hasLetter = true;
+            }
+            else if (Character.isDigit(c)) {
+                hasDigit = true;
+            }
+            else{
+                hasSpecial = true;
+            }
+        }
+        if(!hasDigit){
+            throw  new InvalidPasswordException("Password must have at least one digit: 0 - 9");
+        }
+        if(!hasLetter){
+            throw new InvalidPasswordException("Password must include at least one letter: a - z or A - Z");
+        }
+        if(!hasSpecial){
+            throw new InvalidPasswordException("Password must have at least one special character: " +
+                    "@ # $ % ^ & * ( ) _ - + = ! ? . , ; : [ ] { } ( ) < > / \\ |");
+        }
+    }
+
+    public boolean register(String username,String password, LocalDate dob, String address, Gender gender){
         this.setUsername(username);
         this.setPassword(password);
         this.setDateOfBirth(dob);
