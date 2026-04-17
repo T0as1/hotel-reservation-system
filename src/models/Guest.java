@@ -1,4 +1,138 @@
 package models;
 
-public class Guest {
+import exceptions.*;
+import enums.Gender;
+import interfaces.Payable;
+
+import java.time.LocalDate;
+
+public class Guest implements Payable {
+    // data fields
+    private String username;
+    private String password;
+    private LocalDate dateOfBirth;
+    private double balance;
+    private String Address;
+    private Gender gender;
+    private String roomPreferences;
+
+    // setters & getters, password shouldn't have a getter
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) throws EmptyUserNameException {
+        this.username = username;
+        if (username == null || username.isBlank()) {
+            throw new EmptyUserNameException("Username cannot be empty");
+        }
+    }
+
+    //password setter, when called in main, password requirements
+    //must appear to the user BEFORE writing the password
+
+    public void setPassword(String password) throws InvalidPasswordException {
+        this.password = password;
+        validatePassword(password);
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) throws dobException {
+        this.dateOfBirth = dateOfBirth;
+        if (dateOfBirth.getYear() < 1900 || dateOfBirth.getYear() > 2008)
+            throw new dobException("Date of birth is invalid, only 18+ are allowed");
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public String getAddress() {
+        return Address;
+    }
+
+    public void setAddress(String address) {
+        Address = address;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getRoomPreferences() {
+        return roomPreferences;
+    }
+
+    public void setRoomPreferences(String roomPreferences) {
+        this.roomPreferences = roomPreferences;
+    }
+
+    // get invoice amount and deduct from balance, handle balance exceptions
+    @Override
+    public boolean pay(double amount) throws InvalidAmountException, InsufficientBalanceException  {
+        if(amount <= 0){
+            throw new InvalidAmountException("Amount must be positive");
+        }
+        if(this.balance < amount){
+            throw new InsufficientBalanceException("Balance is insufficient");
+        }
+        this.balance = this.balance - amount;
+        return true;
+    }
+
+    private void validatePassword (String p) throws InvalidPasswordException{
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+        boolean hasLetter = false;
+
+        if (p == null || p.isBlank()) {
+            throw new InvalidPasswordException("Password cannot be empty");
+        }
+        if (p.length() < 5){
+            throw new InvalidPasswordException("Password must contain at least 5 characters");
+        }
+        for(char c: p.toCharArray()){
+            if(Character.isLetter(c)){
+                hasLetter = true;
+            }
+            else if (Character.isDigit(c)) {
+                hasDigit = true;
+            }
+            else{
+                hasSpecial = true;
+            }
+        }
+        if(!hasDigit){
+            throw  new InvalidPasswordException("Password must have at least one digit: 0 - 9");
+        }
+        if(!hasLetter){
+            throw new InvalidPasswordException("Password must include at least one letter: a - z or A - Z");
+        }
+        if(!hasSpecial){
+            throw new InvalidPasswordException("Password must have at least one special character: " +
+                    "@ # $ % ^ & * ( ) _ - + = ! ? . , ; : [ ] { } ( ) < > / \\ |");
+        }
+    }
+
+    public boolean register(String username,String password, LocalDate dob, String address, Gender gender){
+        this.setUsername(username);
+        this.setPassword(password);
+        this.setDateOfBirth(dob);
+        this.setAddress(address);
+        this.setGender(gender);
+        // adding guest should be called here
+        return true;
+    }
 }
