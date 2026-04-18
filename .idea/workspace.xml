@@ -1,71 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="7538afd7-c116-4339-82b1-2be0dd4e37d4" name="Changes" comment="" />
+    <list default="true" id="a5600282-8854-4abf-bb81-654ad736484f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/models/RoomType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/enums/RoomType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/Amenity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Amenity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Room.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 5,
-  &quot;fromUser&quot;: false
-}</component>
-  <component name="ProjectId" id="3C3hhHZMUXoGlrNazHQbPRgJleb" />
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "omarsawy119-web"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/T0as1/hotel-reservation-system.git",
+    "accountId": "16dcf59d-a41d-4bc5-b236-ddca75569df2"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="3CRR3a6gxRCYPYet2RY5h605sDp" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
+    "git-widget-placeholder": "milestone-1",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/abdur/IdeaProjects/hotel-reservation-system",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+    "last_opened_file_path": "C:/Users/omars/IdeaProjects/hotel-reservation-system"
   }
 }]]></component>
-<<<<<<< HEAD
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\abdur\IdeaProjects\hotel-reservation-system" />
-    </key>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
   </component>
-=======
->>>>>>> feature/database-uml
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="7538afd7-c116-4339-82b1-2be0dd4e37d4" name="Changes" comment="" />
-      <created>1775620282668</created>
+      <changelist id="a5600282-8854-4abf-bb81-654ad736484f" name="Changes" comment="" />
+      <created>1776346197466</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1775620282668</updated>
-      <workItem from="1775620307671" duration="43000" />
-<<<<<<< HEAD
-      <workItem from="1775642348892" duration="1414000" />
-=======
-      <workItem from="1775642348892" duration="1031000" />
->>>>>>> feature/database-uml
+      <updated>1776346197466</updated>
     </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
 </project>
