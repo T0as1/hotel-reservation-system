@@ -1,8 +1,16 @@
 package models;
 
+import data.HotelDatabase;
+import enums.ReservationStatus;
 import exceptions.*;
 import enums.Gender;
 import interfaces.Payable;
+import booking.Invoice;
+import booking.Reservation;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 import java.time.LocalDate;
 
@@ -22,7 +30,7 @@ public class Guest implements Payable {
         return username;
     }
 
-    public void setUsername(String username) throws EmptyUserNameException {
+    public void setUsername(String username){
         this.username = username;
         if (username == null || username.isBlank()) {
             throw new EmptyUserNameException("Username cannot be empty");
@@ -30,6 +38,7 @@ public class Guest implements Payable {
     }
 
     //password setter, when called in main, password requirements
+    //(1 letter 1 digit 1 special and at least 5 chars)
     //must appear to the user BEFORE writing the password
 
     public void setPassword(String password) throws InvalidPasswordException {
@@ -41,10 +50,12 @@ public class Guest implements Payable {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) throws dobException {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
-        if (dateOfBirth.getYear() < 1900 || dateOfBirth.getYear() > 2008)
-            throw new dobException("Date of birth is invalid, only 18+ are allowed");
+        if (dateOfBirth.getYear() > 2008)
+            throw new dobException("Date of birth is invalid, only 18+ are allowed to register");
+        if (dateOfBirth.getYear() < 1900 )
+            throw new dobException("Date of birth can not be earlier than 1900");
     }
 
     public double getBalance() {
@@ -120,6 +131,9 @@ public class Guest implements Payable {
         if(!hasLetter){
             throw new InvalidPasswordException("Password must include at least one letter: a - z or A - Z");
         }
+
+        // if neither a letter nor a digit, then it is a special character
+
         if(!hasSpecial){
             throw new InvalidPasswordException("Password must have at least one special character: " +
                     "@ # $ % ^ & * ( ) _ - + = ! ? . , ; : [ ] { } ( ) < > / \\ |");
