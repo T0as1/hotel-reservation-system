@@ -135,4 +135,52 @@ public class Guest implements Payable {
         // adding guest should be called here
         return true;
     }
+
+    public boolean login(String username, String password)
+    {
+        Guest g = HotelDatabase.findGuestByUsername(username);
+
+        if(g!= null && g.password.equals(password))
+            return true;
+
+        return false;
+
+    }
+    public List <Room> viewAvailableRooms()
+    {
+        return HotelDatabase.getAvailableRooms();
+    }
+
+    public boolean makeReservation(Reservation res)
+    {
+        HotelDatabse.addReservation(res);
+
+    }
+    public List <Reservation> viewMyReservation
+    {
+        List <Reservation> mine = new ArrayList<>();
+        for (Reservation r : HotelDatabase.getAllReservations())
+        {
+            if (r.getGuest().getUsername().equals(this.username))
+                mine.add(r);
+        }
+        return mine;
+
+        }
+
+        public boolean cancelReservation (String reservationID)
+        {
+            for (Reservation r : HotelDatabase.getAllReservations())
+            {
+                if (String.valueOf(r.getReservationID()).equals(reservationID))
+                    r.setStatus(ReservationStatus.CANCELLED);
+                return true;
+            }
+            return false;
+        }
+
+
+
 }
+
+

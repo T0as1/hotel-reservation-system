@@ -22,6 +22,7 @@ public class Invoice {
 
     public void processPayment(PaymentMethod method)
     {
+        this.paymentMethod = method;
         markAsPaid();
         System.out.println("PAYMENT METHOD: "+ paymentMethod);
     }
