@@ -92,7 +92,7 @@ public class Guest implements Payable {
 
     // get invoice amount and deduct from balance, handle balance exceptions
     @Override
-    public boolean pay(double amount) throws InvalidAmountException, InsufficientBalanceException  {
+    public boolean pay(double amount) {
         if(amount <= 0){
             throw new InvalidAmountException("Amount must be positive");
         }
@@ -103,7 +103,7 @@ public class Guest implements Payable {
         return true;
     }
 
-    private void validatePassword (String p) throws InvalidPasswordException{
+    private void validatePassword (String p){
         boolean hasDigit = false;
         boolean hasSpecial = false;
         boolean hasLetter = false;
@@ -114,6 +114,10 @@ public class Guest implements Payable {
         if (p.length() < 5){
             throw new InvalidPasswordException("Password must contain at least 5 characters");
         }
+
+        // turn password to a character array and loops
+        // through it checking the type of every character
+
         for(char c: p.toCharArray()){
             if(Character.isLetter(c)){
                 hasLetter = true;
@@ -146,7 +150,6 @@ public class Guest implements Payable {
         this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setGender(gender);
-        // adding guest should be called here
         return true;
     }
 }
