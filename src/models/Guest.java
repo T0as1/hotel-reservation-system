@@ -152,4 +152,45 @@ public class Guest implements Payable {
         this.setGender(gender);
         return true;
     }
+
+    public boolean login(String username, String password){
+        Guest g = HotelDatabase.findGuestByUsername(username);
+        if (g!= null && g.password.equals(password))
+            return true;
+        return false;
+    }
+
+    public List<Room> viewAvailableRooms(){
+       return HotelDatabase.getAvailableRooms();
+    }
+
+    public boolean makeReservation(Reservation res){
+        HotelDatabase.addReservation(res);
+        return true;
+    }
+
+    public List<Reservation> viewMyReservations() {
+        List<Reservation> myReservations = new ArrayList<>();
+        for(Reservation r: HotelDatabase.getAllReservations()){
+            if(r.getGuest().getUsername().equals(this.username))
+                myReservations.add(r);
+        }
+        return myReservations;
+    }
+
+    public boolean cancelReservation(String reservationId){
+        int reservationIdInt = Integer.parseInt(reservationId);
+        for(Reservation r : HotelDatabase.getAllReservations()){
+            if(r.getReservationID() == reservationIdInt){
+                r.setStatus(ReservationStatus.CANCELLED);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Invoice checkout(Reservation res) {
+        return null;
+    }
+
 }
