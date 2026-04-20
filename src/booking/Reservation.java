@@ -47,8 +47,7 @@ public class Reservation {
 
     public boolean overlapsWith(LocalDate newStart , LocalDate newEnd)
     {
-        if (newStart.isBefore(this.checkOutDate)&& newEnd.isAfter(this.checkInDate))
-            return true;
+        return newStart.isBefore(this.checkOutDate) && newEnd.isAfter(this.checkInDate);
     }
 
 //getters
@@ -69,5 +68,13 @@ public class Reservation {
 
     public Guest getGuest() {
         return guest;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+    public voic cancel()
+    {
+        this.status = ReservationStatus.CANCELLED;
     }
 }

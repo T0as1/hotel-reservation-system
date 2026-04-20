@@ -2,7 +2,7 @@ package data;
 
 import booking.Invoice;
 import booking.Reservation;
-import enums.RoomType;
+import models.RoomType;
 import models.Amenity;
 import models.Guest;
 import models.Room;
@@ -25,19 +25,19 @@ public class HotelDatabase {
         System.out.println("✅ HotelDatabase: Loading dummy data...");
 
         // Dummy Room Types
-        roomTypes.add(new RoomType("Single", 100.0, 1, "Single bed room"));
-        roomTypes.add(new RoomType("Double", 150.0, 2, "Two beds room"));
-        roomTypes.add(new RoomType("Suite", 250.0, 4, "Luxury suite"));
+        roomTypes.add(new RoomType("Single", 100.0, 1, String description));
+        roomTypes.add(new RoomType("Double", 150.0, 2,String description ));
+        roomTypes.add(new RoomType("Suite", 250.0, 4, String description));
 
         // Dummy Amenities
-        amenities.add(new Amenity("WiFi", "High speed internet", 0.0));
+        amenities.add(new Amenity("WiFi", "High speed internet", 20.0));
         amenities.add(new Amenity("TV", "Smart TV", 10.0));
-        amenities.add(new Amenity("Mini-bar", "Drinks and snacks", 25.0));
+        amenities.add(new Amenity("Mini-bar", "Drinks and snacks", 30.0));
 
         // Dummy Rooms (using the first RoomType)
-        rooms.add(new Room("101", 1, true, roomTypes.get(0)));
-        rooms.add(new Room("102", 1, true, roomTypes.get(1)));
-        rooms.add(new Room("201", 2, true, roomTypes.get(2)));
+        rooms.add(new Room(101, 1, roomTypes.get(0)));
+        rooms.add(new Room(102, 1, roomTypes.get(1)));
+        rooms.add(new Room(201,2,  roomTypes.get(2)));
 
         System.out.println("✅ HotelDatabase: Dummy data loaded successfully!");
     }
@@ -77,7 +77,7 @@ public class HotelDatabase {
     //FINDERS
     public static Guest findGuestByUsername(String username){
         for (Guest g : guests){
-            if (g.getUsername().equal(username)){
+            if (g.getUsername().equals(username)){
                 return g;
             }
         }
