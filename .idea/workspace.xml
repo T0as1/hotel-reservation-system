@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5600282-8854-4abf-bb81-654ad736484f" name="Changes" comment="">
+    <list default="true" id="a5600282-8854-4abf-bb81-654ad736484f" name="Changes" comment="Merge branch 'milestone-1' of https://github.com/T0as1/hotel-reservation-system into feature/guest-class&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;src/exceptions/EmptyUserNameException.java&#10;#&#9;src/exceptions/InsufficientBalanceException.java&#10;#&#9;src/exceptions/InvalidAmountException.java&#10;#&#9;src/exceptions/InvalidPasswordException.java&#10;#&#9;src/exceptions/dobException.java&#10;#&#9;src/models/Guest.java&#10;#&#9;src/models/Staff.java">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/hotel-reservation-system.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/booking/Invoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/booking/Invoice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/booking/Reservation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/booking/Reservation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/HotelDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/HotelDatabase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/Amenity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Amenity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/RoomType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/RoomType.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,12 +39,16 @@
     &quot;assignee&quot;: &quot;omarsawy119-web&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/T0as1/hotel-reservation-system.git",
-    "accountId": "826bf666-d1a7-498a-bd92-9aa07604cfd8"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/T0as1/hotel-reservation-system.git&quot;,
+    &quot;accountId&quot;: &quot;826bf666-d1a7-498a-bd92-9aa07604cfd8&quot;
   }
-}]]></component>
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
@@ -42,16 +58,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#7 on feature/admin-receptionist&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/omars/IdeaProjects/hotel-reservation-system&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "#12 on Merging feature/guest-class",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/omars/IdeaProjects/hotel-reservation-system",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
