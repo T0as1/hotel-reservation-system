@@ -1,6 +1,7 @@
 package booking;
-import enums.PaymentMethod;
 
+import enums.PaymentMethod;
+import java.time.LocalDate;
 
 public class Invoice {
     private int invoiceID;
@@ -8,6 +9,7 @@ public class Invoice {
     private double amount;
     private boolean isPaid;
     private PaymentMethod paymentMethod;
+    private LocalDate paymentDate;
 
     public Invoice(int invoiceID, Reservation reservation) {
         this.invoiceID = invoiceID;
@@ -22,6 +24,8 @@ public class Invoice {
 
     public void processPayment(PaymentMethod method)
     {
+        this.paymentMethod = method;
+        this.paymentDate = LocalDate.now();
         markAsPaid();
         System.out.println("PAYMENT METHOD: "+ paymentMethod);
     }
@@ -33,4 +37,9 @@ public class Invoice {
         System.out.println("Status: " + (isPaid ? "Paid" : "Unpaid"));
     }
 
+    public LocalDate getPaymentDate() { return paymentDate; }
+
+    public double getAmount() {
+        return 0;
+    }
 }
