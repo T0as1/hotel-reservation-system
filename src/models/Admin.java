@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Admin extends Staff implements Manageable {
 
-    public Admin(String username, String password, LocalDate dateOfBirth, int workingHours) {
+    public Admin(String username, String password,Role role,  LocalDate dateOfBirth, int workingHours) {
         super(username, password, Role.ADMIN, workingHours, dateOfBirth);
     }
 

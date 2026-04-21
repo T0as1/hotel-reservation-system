@@ -25,6 +25,10 @@ public class Guest implements Payable {
     private String roomPreferences;
 
     //Constructors
+    public Guest(){
+
+    }
+
     public Guest(String username, String password, LocalDate dateOfBirth,
                  double balance, String address, Gender gender,String roomPreferences ){
         this.username = username;
