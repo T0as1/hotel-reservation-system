@@ -2,10 +2,10 @@ package models;
 import java.util.ArrayList;
 
 public class Room {
-     private int roomNumber;
-     private int floor;
-     private RoomType roomType;
-     private ArrayList <Amenity> amenities;
+     private final int roomNumber;
+     private final int floor;
+     private final RoomType roomType;
+     private final ArrayList <Amenity> amenities;
      private boolean isAvailable;
 
      public Room(int roomNumber,int floor , RoomType roomType) {

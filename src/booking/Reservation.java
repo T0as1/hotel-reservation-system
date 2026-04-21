@@ -73,7 +73,7 @@ public class Reservation {
     public Room getRoom() {
         return room;
     }
-    public voic cancel()
+    public void cancel()
     {
         this.status = ReservationStatus.CANCELLED;
     }

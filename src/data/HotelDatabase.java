@@ -25,9 +25,9 @@ public class HotelDatabase {
         System.out.println("✅ HotelDatabase: Loading dummy data...");
 
         // Dummy Room Types
-        roomTypes.add(new RoomType("Single", 100.0, 1, String description));
-        roomTypes.add(new RoomType("Double", 150.0, 2,String description ));
-        roomTypes.add(new RoomType("Suite", 250.0, 4, String description));
+        roomTypes.add(new RoomType("Single", 100.0, 1,"Standard single bed room"));
+        roomTypes.add(new RoomType("Double", 150.0, 2,"Two beds room" ));
+        roomTypes.add(new RoomType("Suite", 250.0, 4,"Luxury suite with living area"));
 
         // Dummy Amenities
         amenities.add(new Amenity("WiFi", "High speed internet", 20.0));
@@ -39,14 +39,15 @@ public class HotelDatabase {
         rooms.add(new Room(102, 1, roomTypes.get(1)));
         rooms.add(new Room(201,2,  roomTypes.get(2)));
 
-        System.out.println("✅ HotelDatabase: Dummy data loaded successfully!");
+        System.out.println("✅HotelDatabase: Dummy data loaded successfully!");
     }
 
     //GETTERS
     public static List<Room> getAvailableRooms(){
         List<Room> available = new ArrayList<>();
         for (Room r : rooms) {
-            available.add(r);
+            if (r.isAvailable())
+                available.add(r);
         }
         return available;
     }
@@ -83,13 +84,44 @@ public class HotelDatabase {
         }
         return null;
     }
-    public static Room findRoomByNumber(String roomNumber){
+    public static Room findRoomByNumber(int roomNumber){
         for (Room r : rooms){
-            if (r.getRoomNumber().equals(roomNumber)) {
+            if (r.getRoomNumber() == (roomNumber)) {
                 return r;
             }
         }
         return null;
+    }
+
+    // ====================== ROOM TYPE METHODS ======================
+    public static void addRoomType(RoomType rt) {
+        roomTypes.add(rt);
+    }
+
+    public static List<RoomType> getAllRoomTypes() {
+        return new ArrayList<>(roomTypes);
+    }
+
+    public static void deleteRoomType(String name) {
+        roomTypes.removeIf(rt -> rt.getName().equalsIgnoreCase(name));
+    }
+
+    // ====================== AMENITY METHODS ======================
+    public static void addAmenity(Amenity a) {
+        amenities.add(a);
+    }
+
+    public static List<Amenity> getAllAmenities() {
+        return new ArrayList<>(amenities);
+    }
+
+    public static void deleteAmenity(String name) {
+        amenities.removeIf(a -> a.getName().equalsIgnoreCase(name));
+    }
+
+    // ====================== ROOM METHODS ======================
+    public static void deleteRoom(int roomNumber) {
+        rooms.removeIf(r -> r.getRoomNumber() == roomNumber);
     }
 
 }

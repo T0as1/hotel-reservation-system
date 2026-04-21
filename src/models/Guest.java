@@ -90,6 +90,7 @@ public class Guest implements Payable {
         this.roomPreferences = roomPreferences;
     }
 
+
     // get invoice amount and deduct from balance, handle balance exceptions
     @Override
     public boolean pay(double amount) {
@@ -140,7 +141,7 @@ public class Guest implements Payable {
 
         if(!hasSpecial){
             throw new InvalidPasswordException("Password must have at least one special character: " +
-                    "@ # $ % ^ & * ( ) _ - + = ! ? . , ; : [ ] { } ( ) < > / \\ |");
+                    "@ # $ % ^ & * ( ) _ - + = ! ? . , ; : [ ] { } ( ) < > / |");
         }
     }
 
@@ -150,6 +151,7 @@ public class Guest implements Payable {
         this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setGender(gender);
+        HotelDatabase.addGuest(this);
         return true;
     }
 
@@ -190,7 +192,10 @@ public class Guest implements Payable {
     }
 
     public Invoice checkout(Reservation res) {
-        return null;
+        Invoice invoice = new Invoice(res.getReservationID(), res);
+        this.pay(invoice.getAmount());
+        HotelDatabase.addInvoice(invoice);
+        return invoice;
     }
 
 }
