@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/hotel-reservation-system.iml" filepath="$PROJECT_DIR$/hotel-reservation-system.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/.idea/hotel-reservation-system.iml" filepath="$PROJECT_DIR$/.idea/hotel-reservation-system.iml" />
->>>>>>> 05e0839 (first commit)
     </modules>
   </component>
 </project>

@@ -38,7 +38,8 @@ public class Room {
     }
 
     public boolean isAvailable() {
-        return isAvailable;
+
+         return isAvailable;
     }
 
     public void book()

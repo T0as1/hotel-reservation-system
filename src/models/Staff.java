@@ -1,12 +1,6 @@
 package models;
 import enums.Role;
-import java.util.List;
-import data.HotelDatabase;
-import booking.Reservation;
 import java.time.LocalDate;
-
-
-
 public abstract class Staff {
     private String username;
     private String password;
@@ -73,23 +67,5 @@ public abstract class Staff {
             this.username = username;}
 
     }
-
-    public List<Guest> viewAllGuests()
-    {
-        return HotelDatabase.getAllGuests ();
-    }
-    public <List> Room viewAllRooms()
-    {
-        return HotelDatabse.getAllRooms;
-
-    }
-
-    public List<Resrvation> viewAllReservations()
-    {
-        return HotelDatabase.getAllReservations;
-
-    }
-
-
 
 }
