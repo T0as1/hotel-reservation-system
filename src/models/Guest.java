@@ -20,9 +20,21 @@ public class Guest implements Payable {
     private String password;
     private LocalDate dateOfBirth;
     private double balance;
-    private String Address;
+    private String address;
     private Gender gender;
     private String roomPreferences;
+
+    //Constructors
+    public Guest(String username, String password, LocalDate dateOfBirth,
+                 double balance, String address, Gender gender,String roomPreferences ){
+        this.username = username;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.balance = balance;
+        this.address = address;
+        this.gender = gender;
+        this.roomPreferences = roomPreferences;
+    }
 
     // setters & getters, password shouldn't have a getter
 
@@ -67,11 +79,11 @@ public class Guest implements Payable {
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(String address) {
-        Address = address;
+        this.address = address;
     }
 
     public Gender getGender() {
