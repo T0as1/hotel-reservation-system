@@ -76,6 +76,33 @@ public class HotelDatabase {
     }
 
     //FINDERS
+
+    public static Reservation findReservationById(int reservationId) {
+        for (Reservation r : reservations) {
+            if (r.getReservationID() == reservationId) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    public static RoomType findRoomTypeByName(String name) {
+        for (RoomType rt : roomTypes) {
+            if (rt.getName().equalsIgnoreCase(name)) {
+                return rt;
+            }
+        }
+        return null;
+    }
+
+    public static Amenity findAmenityByName(String name) {
+        for (Amenity a : amenities) {
+            if (a.getName().equalsIgnoreCase(name)) {
+                return a;
+            }
+        }
+        return null;
+    }
     public static Guest findGuestByUsername(String username){
         for (Guest g : guests){
             if (g.getUsername().equals(username)){

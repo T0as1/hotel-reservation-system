@@ -2,30 +2,40 @@ package booking;
 import enums.ReservationStatus;
 import models.Guest;
 import models.Room;
-
+import models.Amenity;
+import java.util.List;
+import java.util.ArrayList;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
 public class Reservation {
+    private static int counter=1;
     private final int reservationID;
     private Guest guest;
     private Room room;
     private final LocalDate checkInDate;
     private final LocalDate checkOutDate;
     private ReservationStatus status;
-
+    private List<Amenity> selectedAmenities;
 
     //constructor:
-    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate)
+    public Reservation( Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate, List<Amenity> selectedAmenities)
     {
-        this.reservationID = reservationID;
+        this.reservationID = counter++  ;
+
         this.guest = guest;
         this.room = room;
+
+        if (checkOutDate.isBefore(checkInDate) || checkOutDate.equals(checkInDate)) {
+            throw new IllegalArgumentException("Invalid reservation dates");
+        }
+
         this. checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.status = ReservationStatus.PENDING;
+        this.selectedAmenities = new ArrayList<>(selectedAmenities);
 
 
 
@@ -36,13 +46,21 @@ public class Reservation {
 
         return ChronoUnit.DAYS.between(checkInDate,checkOutDate);
     }
+    public double calculateRoomCost() {
+        return calculateDuration() * room.getRoomType().getPricePerNight();
+    }
 
-    public double calculateTotalCost()
-    {
-        return calculateDuration()*room.getRoomType().getPricePerNight();
-    } // price per night is determined by room type
+    public double calculateAmenitiesCost() {
+        double amenitiesPerNight = 0;
+        for (Amenity amenity : selectedAmenities) {
+            amenitiesPerNight += amenity.getAdditionalCost();
+        }
+        return amenitiesPerNight * calculateDuration();
+    }
 
-
+    public double calculateTotalCost() {
+        return calculateRoomCost() + calculateAmenitiesCost();
+    }
 
 
     public boolean overlapsWith(LocalDate newStart , LocalDate newEnd)
@@ -76,5 +94,17 @@ public class Reservation {
     public void cancel()
     {
         this.status = ReservationStatus.CANCELLED;
+    }
+
+    public LocalDate getCheckInDate() {
+        return checkInDate;
+    }
+
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public List<Amenity> getSelectedAmenities() {
+        return new ArrayList<>(selectedAmenities);
     }
 }

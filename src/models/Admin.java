@@ -24,7 +24,16 @@ public class Admin extends Staff implements Manageable {
     }
 
     public void updateRoomType(String name, double newPrice, String newDescription) {
-        System.out.println("RoomType updated: " + name);
+        for (RoomType rt : HotelDatabase.getAllRoomTypes()) {
+            if (rt.getName().equalsIgnoreCase(name)) {
+                // You need setters first (see below)
+                rt.setPricePerNight(newPrice);
+                rt.setDescription(newDescription);
+                System.out.println("RoomType updated successfully.");
+                return;
+            }
+        }
+        System.out.println("RoomType not found.");
     }
 
     public void deleteRoomType(String name) {
@@ -42,7 +51,15 @@ public class Admin extends Staff implements Manageable {
     }
 
     public void updateAmenity(String name, String newDesc, double newCost) {
-        System.out.println("Amenity updated: " + name);
+        for (Amenity a : HotelDatabase.getAllAmenities()) {
+            if (a.getName().equalsIgnoreCase(name)) {
+                a.setDescription(newDesc);
+                a.setAdditionalCost(newCost);
+                System.out.println("Amenity updated successfully.");
+                return;
+            }
+        }
+        System.out.println("Amenity not found.");
     }
 
     public void deleteAmenity(String name) {
