@@ -2,10 +2,8 @@ package data;
 
 import booking.Invoice;
 import booking.Reservation;
-import models.RoomType;
-import models.Amenity;
-import models.Guest;
-import models.Room;
+import enums.Role;
+import models.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,9 +18,13 @@ public class HotelDatabase {
     private static final ArrayList<RoomType> roomTypes = new ArrayList<>();
     private static final ArrayList<Amenity> amenities = new ArrayList<>();
 
-    // Dummy data (runs automatically)
+    // Admin and receptionist
+    public static Admin admin = new Admin("Admin1", "Y0u$ef", Role.ADMIN, LocalDate.of(1999,10,14), 40 );
+    public static Receptionist receptionist = new Receptionist("Rec1","R3cepti@n", Role.RECEPTIONIST, 45,LocalDate.of(2000,9,15) );
+
+    // Dummy data (runs automatically by using static)
     static {
-        System.out.println("✅ HotelDatabase: Loading dummy data...");
+        System.out.println("HotelDatabase: Loading dummy data...");
 
         // Dummy Room Types
         roomTypes.add(new RoomType("Single", 100.0, 1,"Standard single bed room"));
@@ -39,7 +41,7 @@ public class HotelDatabase {
         rooms.add(new Room(102, 1, roomTypes.get(1)));
         rooms.add(new Room(201,2,  roomTypes.get(2)));
 
-        System.out.println("✅HotelDatabase: Dummy data loaded successfully!");
+        System.out.println("HotelDatabase: Dummy data loaded successfully");
     }
 
     //GETTERS
@@ -90,6 +92,16 @@ public class HotelDatabase {
                 return r;
             }
         }
+        return null;
+    }
+    public static User findUser(String u, String p){
+        if (admin.login(u,p))
+            return admin;
+        if (receptionist.login(u,p))
+            return receptionist;
+        for(Guest g: guests)
+            if(g.login(u,p))
+                return  g;
         return null;
     }
 
