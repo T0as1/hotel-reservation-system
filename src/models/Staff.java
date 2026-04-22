@@ -6,17 +6,15 @@ import booking.Reservation;
 import exceptions.*;
 import java.util.List;
 import java.time.LocalDate;
+import java.util.Scanner;
 
-public abstract class Staff {
-    private String username;
-    private String password;
+public abstract class Staff extends User{
     private Role role;
     private int workingHours;
     private LocalDate dateOfBirth;
 
     public Staff(String username, String password, Role role, int workingHours, LocalDate dateOfBirth) {
-        setUsername(username);
-        setPassword(password);
+       super(username, password);
         setDateOfBirth(dateOfBirth);
         setRole(role);
         setWorkingHours(workingHours);
@@ -47,7 +45,7 @@ public abstract class Staff {
     public void setUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
 
-            throw new EmptyUserNameException("Username cannot be empty");
+            throw new InvalidUsernameException("Username cannot be empty");
         }
         this.username = username;
     }

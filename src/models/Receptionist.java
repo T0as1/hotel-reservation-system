@@ -3,6 +3,7 @@ import enums.Role;
 import enums.ReservationStatus;
 import booking.Reservation;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Receptionist extends Staff {
 
@@ -34,4 +35,16 @@ public class Receptionist extends Staff {
         System.out.println("Guest: " + reservation.getGuest().getUsername() + " has checked out.");
         System.out.println("Reservation ID: " + reservation.getReservationID());
     }
+
+    public void showDashboard(Scanner sc){
+        System.out.println("---Receptionist Dashboard---");
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        if(this.getUsername().equals(username) && this.password.equals(password))
+            return true;
+        return false;
+    }
+
 }

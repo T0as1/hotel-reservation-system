@@ -6,6 +6,7 @@ import interfaces.Manageable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Admin extends Staff implements Manageable {
 
@@ -61,6 +62,17 @@ public class Admin extends Staff implements Manageable {
 
     public void deleteRoom(int roomNumber) {
         HotelDatabase.deleteRoom(roomNumber);
+    }
+
+    public void showDashboard(Scanner sc){
+        System.out.println("---Admin Dashboard---");
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        if (this.getUsername().equals(username) && this.password.equals(password))
+            return true;
+        return false;
     }
 
     @Override

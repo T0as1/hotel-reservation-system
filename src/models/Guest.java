@@ -13,11 +13,11 @@ import java.util.List;
 
 
 import java.time.LocalDate;
+import java.util.Scanner;
 
-public class Guest implements Payable {
+public class Guest extends User implements Payable {
     // data fields
-    private String username;
-    private String password;
+
     private LocalDate dateOfBirth;
     private double balance;
     private String address;
@@ -31,8 +31,7 @@ public class Guest implements Payable {
 
     public Guest(String username, String password, LocalDate dateOfBirth,
                  double balance, String address, Gender gender,String roomPreferences ){
-        this.username = username;
-        this.password = password;
+        super(username, password);
         this.dateOfBirth = dateOfBirth;
         this.balance = balance;
         this.address = address;
@@ -41,26 +40,6 @@ public class Guest implements Payable {
     }
 
     // setters & getters, password shouldn't have a getter
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username){
-        this.username = username;
-        if (username == null || username.isBlank()) {
-            throw new EmptyUserNameException("Username cannot be empty");
-        }
-    }
-
-    //password setter, when called in main, password requirements
-    //(1 letter 1 digit 1 special and at least 5 chars)
-    //must appear to the user BEFORE writing the password
-
-    public void setPassword(String password) throws InvalidPasswordException {
-        this.password = password;
-        validatePassword(password);
-    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
@@ -80,6 +59,9 @@ public class Guest implements Payable {
 
     public void setBalance(double balance) {
         this.balance = balance;
+        if (balance < 0){
+            throw new InsufficientBalanceException("Balance cannot be negative");
+        }
     }
 
     public String getAddress() {
@@ -120,46 +102,6 @@ public class Guest implements Payable {
         return true;
     }
 
-    private void validatePassword (String p){
-        boolean hasDigit = false;
-        boolean hasSpecial = false;
-        boolean hasLetter = false;
-
-        if (p == null || p.isBlank()) {
-            throw new InvalidPasswordException("Password cannot be empty");
-        }
-        if (p.length() < 5){
-            throw new InvalidPasswordException("Password must contain at least 5 characters");
-        }
-
-        // turn password to a character array and loops
-        // through it checking the type of every character
-
-        for(char c: p.toCharArray()){
-            if(Character.isLetter(c)){
-                hasLetter = true;
-            }
-            else if (Character.isDigit(c)) {
-                hasDigit = true;
-            }
-            else{
-                hasSpecial = true;
-            }
-        }
-        if(!hasDigit){
-            throw  new InvalidPasswordException("Password must have at least one digit: 0 - 9");
-        }
-        if(!hasLetter){
-            throw new InvalidPasswordException("Password must include at least one letter: a - z or A - Z");
-        }
-
-        // if neither a letter nor a digit, then it is a special character
-
-        if(!hasSpecial){
-            throw new InvalidPasswordException("Password must have at least one special character: " +
-                    "@ # $ % ^ & * ( ) _ - + = ! ? . , ; : [ ] { } ( ) < > / |");
-        }
-    }
 
     public boolean register(String username,String password, LocalDate dob, String address, Gender gender){
         this.setUsername(username);
@@ -167,7 +109,6 @@ public class Guest implements Payable {
         this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setGender(gender);
-        HotelDatabase.addGuest(this);
         return true;
     }
 
@@ -212,6 +153,10 @@ public class Guest implements Payable {
         this.pay(invoice.getAmount());
         HotelDatabase.addInvoice(invoice);
         return invoice;
+    }
+
+    public void showDashboard(Scanner sc){
+        System.out.println("---Guest Dashboard---");
     }
 
 }
