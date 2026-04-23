@@ -20,9 +20,9 @@ public class HotelDatabase {
     private static final ArrayList<RoomType> roomTypes = new ArrayList<>();
     private static final ArrayList<Amenity> amenities = new ArrayList<>();
 
-    // Dummy data (runs automatically)
+    // Dummy data
     static {
-        System.out.println("✅ HotelDatabase: Loading dummy data...");
+        System.out.println("HotelDatabase: Loading dummy data...");
 
         // Dummy Room Types
         roomTypes.add(new RoomType("Single", 100.0, 1,"Standard single bed room"));
@@ -34,12 +34,12 @@ public class HotelDatabase {
         amenities.add(new Amenity("TV", "Smart TV", 10.0));
         amenities.add(new Amenity("Mini-bar", "Drinks and snacks", 30.0));
 
-        // Dummy Rooms (using the first RoomType)
+        // Dummy Rooms
         rooms.add(new Room(101, 1, roomTypes.get(0)));
         rooms.add(new Room(102, 1, roomTypes.get(1)));
         rooms.add(new Room(201,2,  roomTypes.get(2)));
 
-        System.out.println("✅HotelDatabase: Dummy data loaded successfully!");
+        System.out.println("HotelDatabase: Dummy data loaded successfully!");
     }
 
     //GETTERS
@@ -120,7 +120,7 @@ public class HotelDatabase {
         return null;
     }
 
-    // ====================== ROOM TYPE METHODS ======================
+    // ROOM TYPE METHODS
     public static void addRoomType(RoomType rt) {
         roomTypes.add(rt);
     }
@@ -133,7 +133,7 @@ public class HotelDatabase {
         roomTypes.removeIf(rt -> rt.getName().equalsIgnoreCase(name));
     }
 
-    // ====================== AMENITY METHODS ======================
+    // AMENITY METHODS
     public static void addAmenity(Amenity a) {
         amenities.add(a);
     }
@@ -146,7 +146,7 @@ public class HotelDatabase {
         amenities.removeIf(a -> a.getName().equalsIgnoreCase(name));
     }
 
-    // ====================== ROOM METHODS ======================
+    // ROOM METHODS
     public static void deleteRoom(int roomNumber) {
         rooms.removeIf(r -> r.getRoomNumber() == roomNumber);
     }
