@@ -21,10 +21,28 @@ public class Main {
                     handleRegistration(input);
                     break;
                 case "2":
-                    handleLogin(input);
+                    User loggedinUser = handleLogin(input);
+                    if(loggedinUser != null) {
+                        if(loggedinUser instanceof Guest){
+                            Guest g = (Guest) loggedinUser;
+                            g.showDashboard(input);
+                        }
+                        else if(loggedinUser instanceof Receptionist){
+                            Receptionist rec = (Receptionist) loggedinUser;
+                            rec.showDashboard(input);
+                        }
+                        else if(loggedinUser instanceof Admin){
+                            Admin a = (Admin) loggedinUser;
+                            a.showDashboard(input);
+                        }
+                    }
+                    break;
+
                 case "3":
                     System.out.println("Thanks for visiting us!");
                     return;
+                default:
+                    System.out.println("Invalid choice, try again");
             }
         }
 
@@ -84,7 +102,7 @@ public class Main {
         while (true) {
             try {
                 System.out.print("Enter Gender (MALE/FEMALE): ");
-                String genderInput = s.nextLine().toUpperCase(); // Enums are usually uppercase
+                String genderInput = s.nextLine().toUpperCase();
                 Gender gender = Gender.valueOf(genderInput);
                 newGuest.setGender(gender);
                 break;

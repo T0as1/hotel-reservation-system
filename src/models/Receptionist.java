@@ -38,6 +38,31 @@ public class Receptionist extends Staff {
 
     public void showDashboard(Scanner sc){
         System.out.println("---Receptionist Dashboard---");
+        System.out.println("1.View All Guests\n2.View All Rooms\n3.View All Reservations\n" +
+                "4.Check-in\n5.Check-out\n6.Logout\nChoice: ");
+        String choice = sc.nextLine();
+        while (true) {
+            switch (choice) {
+                case "1":
+                    System.out.println("\n---Current Guest List---");
+                    for(Guest g: viewAllGuests()){
+                        System.out.println(g);
+                    }
+                    System.out.println("\n------------------------");
+                case "2":
+                    System.out.println("\n---Current Room List---");
+                    for(Room r : viewAllRooms()){
+                        System.out.println(r);
+                    }
+                    System.out.println("\n------------------------------");
+                case "3":
+                    System.out.println("\n---Current Reservation List---");
+                    for(Reservation res: viewAllReservations()){
+                        System.out.println(res);
+                    }
+                    System.out.println("\n------------------------------");
+            }
+        }
     }
 
     @Override
