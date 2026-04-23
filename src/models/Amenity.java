@@ -22,4 +22,14 @@ public class Amenity {
     public double getAdditionalCost() {
         return additionalCost;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAdditionalCost(double cost) {
+        if (cost < 0)
+            throw new IllegalArgumentException("Cost cannot be negative");
+        this.additionalCost = cost;
+    }
 }

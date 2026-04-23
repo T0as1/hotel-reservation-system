@@ -69,9 +69,9 @@ public class Guest implements Payable {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
         if (dateOfBirth.getYear() > 2008)
-            throw new dobException("Date of birth is invalid, only 18+ are allowed to register");
+            throw new DobException("Date of birth is invalid, only 18+ are allowed to register");
         if (dateOfBirth.getYear() < 1900 )
-            throw new dobException("Date of birth can not be earlier than 1900");
+            throw new DobException("Date of birth can not be earlier than 1900");
     }
 
     public double getBalance() {
@@ -161,21 +161,34 @@ public class Guest implements Payable {
         }
     }
 
-    public boolean register(String username,String password, LocalDate dob, String address, Gender gender){
+    public boolean register(String username, String password, LocalDate dob, String address, Gender gender) {
+        if (HotelDatabase.findGuestByUsername(username) != null) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
         this.setUsername(username);
         this.setPassword(password);
         this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setGender(gender);
+        this.setBalance(1000); // default starting balance, change if you want
         HotelDatabase.addGuest(this);
         return true;
     }
 
     public boolean login(String username, String password){
         Guest g = HotelDatabase.findGuestByUsername(username);
-        if (g!= null && g.password.equals(password))
-            return true;
-        return false;
+        if (g == null) {
+            System.out.println("User not found.");
+            return false;
+        }
+
+        if (!g.password.equals(password)) {
+            System.out.println("Incorrect password.");
+            return false;
+        }
+
+        return true;
     }
 
     public List<Room> viewAvailableRooms(){
@@ -183,6 +196,19 @@ public class Guest implements Payable {
     }
 
     public boolean makeReservation(Reservation res){
+        if (!res.getRoom().isAvailable()) {
+            throw new IllegalArgumentException("Room is not available");
+        }
+        for (Reservation existing : HotelDatabase.getAllReservations()) {
+            if (existing.getRoom().getRoomNumber() == res.getRoom().getRoomNumber()
+                    && existing.getStatus() != ReservationStatus.CANCELLED
+                    && existing.overlapsWith(res.getCheckInDate(), res.getCheckOutDate())) {
+
+                throw new IllegalArgumentException("Room already booked for these dates");
+            }
+        }
+
+        res.getRoom().book(); //mark room as booked
         HotelDatabase.addReservation(res);
         return true;
     }
@@ -196,22 +222,34 @@ public class Guest implements Payable {
         return myReservations;
     }
 
-    public boolean cancelReservation(String reservationId){
+    public boolean cancelReservation(String reservationId) {
         int reservationIdInt = Integer.parseInt(reservationId);
-        for(Reservation r : HotelDatabase.getAllReservations()){
-            if(r.getReservationID() == reservationIdInt){
+
+        for (Reservation r : HotelDatabase.getAllReservations()) {
+            if (r.getReservationID() == reservationIdInt) {
+
+                if (!r.getGuest().getUsername().equals(this.username)) {
+                    throw new IllegalStateException("You can only cancel your own reservation");
+                }
+
+                if (r.getStatus() == ReservationStatus.CHECKED_IN ||
+                        r.getStatus() == ReservationStatus.CHECKED_OUT ||
+                        r.getStatus() == ReservationStatus.COMPLETED) {
+                    throw new IllegalStateException("This reservation can no longer be cancelled");
+                }
+
                 r.setStatus(ReservationStatus.CANCELLED);
+                r.getRoom().release();
                 return true;
             }
         }
         return false;
     }
 
-    public Invoice checkout(Reservation res) {
-        Invoice invoice = new Invoice(res.getReservationID(), res);
-        this.pay(invoice.getAmount());
-        HotelDatabase.addInvoice(invoice);
-        return invoice;
-    }
+        public Invoice checkout(Reservation res) {
+            Invoice invoice = new Invoice(res);
+            HotelDatabase.addInvoice(invoice);
+            return invoice;
+        }
 
 }

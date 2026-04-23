@@ -39,7 +39,7 @@ public abstract class Staff {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         if (dateOfBirth == null) {
 
-            throw new dobException("Date of birth cannot be null");
+            throw new DobException("Date of birth cannot be null");
         }
         this.dateOfBirth = dateOfBirth;
     }

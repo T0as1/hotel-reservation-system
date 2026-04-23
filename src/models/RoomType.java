@@ -34,4 +34,14 @@ public class RoomType {
     public String getDescription() {
         return description;
     }
+
+    public void setPricePerNight(double price) {
+        if (price < 0)
+            throw new IllegalArgumentException("Price cannot be negative");
+        this.pricePerNight = price;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

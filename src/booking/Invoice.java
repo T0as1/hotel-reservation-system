@@ -4,15 +4,16 @@ import enums.PaymentMethod;
 import java.time.LocalDate;
 
 public class Invoice {
-    private int invoiceID;
+    private static int counter = 1;
+    private   int invoiceID;
     private Reservation reservation;
     private double amount;
     private boolean isPaid;
     private PaymentMethod paymentMethod;
     private LocalDate paymentDate;
 
-    public Invoice(int invoiceID, Reservation reservation) {
-        this.invoiceID = invoiceID;
+    public Invoice(Reservation reservation) {
+        this.invoiceID = counter++;
         this.reservation = reservation;
         this.amount = reservation.calculateTotalCost();
         this.isPaid = false;
@@ -32,7 +33,23 @@ public class Invoice {
 
     public void printInvoice() {
         System.out.println("--- Hotel Invoice ---");
+        System.out.println("Invoice ID: " + invoiceID);
         System.out.println("Guest: " + reservation.getGuest().getUsername());
+        System.out.println("Room: " + reservation.getRoom().getRoomNumber());
+        System.out.println("Room Type: " + reservation.getRoom().getRoomType().getName());
+        System.out.println("Nights: " + reservation.calculateDuration());
+        System.out.println("Room Cost: $" + reservation.calculateRoomCost());
+        System.out.println("Amenities Cost: $" + reservation.calculateAmenitiesCost());
+
+        System.out.println("Amenities:");
+        if (reservation.getSelectedAmenities().isEmpty()) {
+            System.out.println("None");
+        } else {
+            for (models.Amenity a : reservation.getSelectedAmenities()) {
+                System.out.println("- " + a.getName() + " ($" + a.getAdditionalCost() + " per night)");
+            }
+        }
+
         System.out.println("Total Amount: $" + amount);
         System.out.println("Status: " + (isPaid ? "Paid" : "Unpaid"));
     }
@@ -40,6 +57,6 @@ public class Invoice {
     public LocalDate getPaymentDate() { return paymentDate; }
 
     public double getAmount() {
-        return 0;
+        return amount;
     }
 }
