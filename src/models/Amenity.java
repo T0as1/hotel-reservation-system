@@ -19,6 +19,11 @@ public class Amenity {
         return description;
     }
 
+    @Override
+    public String toString() {
+        return "Name: " + getName() + " | Description: " + getDescription() + " | Additional Cost: " + getAdditionalCost();
+    }
+
     public double getAdditionalCost() {
         return additionalCost;
     }

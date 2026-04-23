@@ -50,7 +50,14 @@ public class Reservation {
         return newStart.isBefore(this.checkOutDate) && newEnd.isAfter(this.checkInDate);
     }
 
-//getters
+    @Override
+    public String toString() {
+        return "ID: " + getReservationID() + " | Guest: " + getGuest().getUsername() + " | Room: "
+                + getRoom().getRoomNumber() + " | Check in Date: " + this.checkInDate + " | Check out Date: "
+                + this.checkOutDate + " | Status: " +getStatus();
+    }
+
+    //getters
     public int getReservationID() {
         return reservationID;
     }

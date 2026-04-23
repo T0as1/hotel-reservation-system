@@ -24,7 +24,6 @@ public class HotelDatabase {
 
     // Dummy data (runs automatically by using static)
     static {
-        System.out.println("HotelDatabase: Loading dummy data...");
 
         // Dummy Room Types
         roomTypes.add(new RoomType("Single", 100.0, 1,"Standard single bed room"));
@@ -41,7 +40,6 @@ public class HotelDatabase {
         rooms.add(new Room(102, 1, roomTypes.get(1)));
         rooms.add(new Room(201,2,  roomTypes.get(2)));
 
-        System.out.println("HotelDatabase: Dummy data loaded successfully");
     }
 
     //GETTERS

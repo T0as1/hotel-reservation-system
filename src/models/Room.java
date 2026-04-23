@@ -57,4 +57,10 @@ public class Room {
     public int getFloor() {
         return floor;
     }
+
+    @Override
+    public String toString(){
+         return "Room Number: " + getRoomNumber() + " | Floor: " + getFloor() + " | Room Type"
+                 + getRoomType() + " | Amenities: " + getAmenities() + " | Available" + isAvailable();
+    }
 }

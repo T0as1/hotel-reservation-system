@@ -79,4 +79,8 @@ abstract public class User {
     }
     public abstract boolean login(String username, String password);
     public abstract void showDashboard(Scanner sc);
+    @Override
+    public String toString() {
+        return "Username: " + username;
+    }
  }

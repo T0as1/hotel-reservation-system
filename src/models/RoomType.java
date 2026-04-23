@@ -34,4 +34,10 @@ public class RoomType {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + getName() + " | Price Per Night: " + getPricePerNight() + " | Description: "
+                + getDescription() + " | Capacity: " + getCapacity();
+    }
 }

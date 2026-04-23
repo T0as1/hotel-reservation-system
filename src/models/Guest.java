@@ -155,6 +155,12 @@ public class Guest extends User implements Payable {
         return invoice;
     }
 
+    public String toString (){
+        return super.toString() + "| Date of birth: " + getDateOfBirth() + " | Balance: " + getBalance()
+                + " | Address: " + getAddress() +  " | Gender: " + getGender() + " | Room preferences: "
+                + getRoomPreferences();
+    }
+
     public void showDashboard(Scanner sc){
         System.out.println("---Guest Dashboard---");
     }
