@@ -2,10 +2,12 @@ package data;
 
 import booking.Invoice;
 import booking.Reservation;
+import enums.Gender;
 import enums.Role;
 import models.*;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,10 @@ public class HotelDatabase {
         rooms.add(new Room(102, 1, roomTypes.get(1)));
         rooms.add(new Room(201,2,  roomTypes.get(2)));
 
+        // Dummy Guest
+        Guest g = new Guest("Ahmed", "@4med", LocalDate.of(2000,10,7), 2000.0, "21 Street", Gender.MALE, "WiFi");
+        guests.add(g);
+
     }
 
     //GETTERS
@@ -60,6 +66,7 @@ public class HotelDatabase {
     public static List<Reservation> getAllReservations(){
         return new ArrayList<>(reservations);
     }
+    public static List<Invoice> getAllInvoices(){return new ArrayList<>(invoices);}
 
     //ADDERS
     public static void addGuest(Guest guest){
@@ -86,7 +93,7 @@ public class HotelDatabase {
     }
     public static Room findRoomByNumber(int roomNumber){
         for (Room r : rooms){
-            if (r.getRoomNumber() == (roomNumber)) {
+            if (r.getRoomNumber() == roomNumber) {
                 return r;
             }
         }
@@ -100,6 +107,22 @@ public class HotelDatabase {
         for(Guest g: guests)
             if(g.login(u,p))
                 return  g;
+        return null;
+    }
+    public static Reservation  findReservationById(int id){
+        for (Reservation r: reservations) {
+            if (r.getReservationID() == id){
+                return r;
+            }
+        }
+        return null;
+    }
+    public static RoomType findRoomTypeByName(String name){
+        for(RoomType rt: getAllRoomTypes()){
+            if(rt.getName().equals(name)){
+                return rt;
+            }
+        }
         return null;
     }
 
@@ -127,6 +150,17 @@ public class HotelDatabase {
 
     public static void deleteAmenity(String name) {
         amenities.removeIf(a -> a.getName().equalsIgnoreCase(name));
+    }
+
+    public static Amenity getAmenityByName(String name) {
+
+        for (Amenity a : amenities) {
+            if (a.getName().equalsIgnoreCase(name)) {
+                return a;
+            }
+        }
+
+        return null;
     }
 
     // ====================== ROOM METHODS ======================
