@@ -1,11 +1,13 @@
 package models;
+import data.HotelDatabase;
+
 import java.util.ArrayList;
 
 public class Room {
-     private final int roomNumber;
-     private final int floor;
-     private final RoomType roomType;
-     private final ArrayList <Amenity> amenities;
+     private int roomNumber;
+     private int floor;
+     private RoomType roomType;
+     private ArrayList <Amenity> amenities;
      private boolean isAvailable;
 
      public Room(int roomNumber,int floor , RoomType roomType) {
@@ -37,6 +39,27 @@ public class Room {
         return amenities;
     }
 
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public void setFloor(int floor) {
+        this.floor = floor;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
+
+    public void setAmenities(ArrayList<Amenity> amenities) {
+        this.amenities = amenities;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
     public boolean isAvailable() {
 
          return isAvailable;
@@ -58,9 +81,29 @@ public class Room {
         return floor;
     }
 
+    public void addAmenityToRoom(String amenity) {
+        //check to ensure the same thing is not added twice to the same room
+        for (Amenity a : this.amenities) {
+            if (a.getName().equalsIgnoreCase(a.getName())) {
+                System.out.println("Room already has this amenity");
+                return;
+            }
+        }
+
+
+        Amenity roomAmenity = HotelDatabase.getAmenityByName(amenity);
+
+        if (roomAmenity != null) {
+            this.amenities.add(roomAmenity);
+            System.out.println(amenity + " added successfully");
+        }
+    }
+
+
     @Override
     public String toString(){
-         return "Room Number: " + getRoomNumber() + " | Floor: " + getFloor() + " | Room Type"
-                 + getRoomType() + " | Amenities: " + getAmenities() + " | Available" + isAvailable();
+         return "Room Number: " + getRoomNumber() + " | Floor: " + getFloor() + " | Room Type: "
+                 + getRoomType() + " | Amenities: " + getAmenities() + " | Status: " + (isAvailable() ? "Available"
+    : "Occupied");
     }
 }
