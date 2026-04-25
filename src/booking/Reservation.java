@@ -5,8 +5,10 @@ import models.Guest;
 import models.Room;
 
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 
 public class Reservation {
@@ -16,6 +18,7 @@ public class Reservation {
     private final LocalDate checkInDate;
     private final LocalDate checkOutDate;
     private ReservationStatus status;
+    private ArrayList<Amenity> selectedAmenities = new ArrayList<>();
 
 
     //constructor:
@@ -41,7 +44,7 @@ public class Reservation {
     public double calculateTotalCost()
     {
         double totalCost = calculateDuration()*room.getRoomType().getPricePerNight();
-        for (Amenity a : this.room.getAmenities()) {
+        for (Amenity a : selectedAmenities) {
             totalCost += a.getAdditionalCost();
         }
         return totalCost;
@@ -59,7 +62,8 @@ public class Reservation {
     public String toString() {
         return "ID: " + getReservationID() + " | Guest: " + getGuest().getUsername() + " | Room: "
                 + getRoom().getRoomNumber() + " | Check in Date: " + this.checkInDate + " | Check out Date: "
-                + this.checkOutDate + " | Status: " + getStatus();
+                + this.checkOutDate + " | Status: " + getStatus() + "| Amenities: "
+                + ((this.selectedAmenities == null) ? "None" : this.selectedAmenities );
     }
 
     //getters
@@ -92,5 +96,12 @@ public class Reservation {
     public  LocalDate getCheckInDate(){return checkInDate;}
     public LocalDate getCheckOutDate() {
         return checkOutDate;
+    }
+    public ArrayList<Amenity> getSelectedAmenities() {
+        return selectedAmenities;
+    }
+
+    public void addAmenity(Amenity amenity) {
+        selectedAmenities.add(amenity);
     }
 }

@@ -244,10 +244,33 @@ public class Guest extends User implements Payable {
                                 System.out.println("Error: Please input date in the correct format");
                             }
                         }
+
                         // Auto-generate ID
                         int newId = HotelDatabase.getAllReservations().size() + 1;
 
                         Reservation newRes = new Reservation(newId, this, selectRoom, inDate, outDate);
+                        while (true) {
+                            System.out.println("\n--- Available Amenities ---");
+                            for (Amenity a : HotelDatabase.getAllAmenities()) {
+                                System.out.println("- " + a.getName() + " (" + a.getAdditionalCost() + ")");
+                            }
+                            System.out.println("Enter exact amenity name to add, or type 'done' to finish:");
+
+                            String c = sc.nextLine();
+                            if (c.equalsIgnoreCase("done")) break;
+
+                            Amenity selected = HotelDatabase.getAmenityByName(c);
+
+                            if (selected != null && !newRes.getSelectedAmenities().contains(selected)) {
+
+                                newRes.getSelectedAmenities().add(selected);
+                                System.out.println(selected.getName() + " added to your reservation.");
+                            } else if (newRes.getSelectedAmenities().contains(selected)) {
+                                System.out.println("Error: Amenity already selected");
+                            } else {
+                                System.out.println("Error: Amenity not found.");
+                            }
+                        }
                         HotelDatabase.addReservation(newRes);
                         newRes.getRoom().setAvailable(false);
 
@@ -258,12 +281,12 @@ public class Guest extends User implements Payable {
                         if(selectRoom.getAmenities() != null)
                         {
                             double totalPrice = newRes.calculateTotalCost();
-                            for (Amenity a : selectRoom.getAmenities()) {
+                            for (Amenity a : newRes.getSelectedAmenities()) {
                                 System.out.println("+ " + a.getName() + ": " + a.getAdditionalCost());
                             }
 
                             System.out.println("---------------------------");
-                            System.out.println("Total Cost: " + totalPrice);
+                            System.out.println("Total Cost: " + totalPrice+"\n");
                         }
                         break;
                     } else {
@@ -324,7 +347,7 @@ public class Guest extends User implements Payable {
                             (cancelRes.getStatus() == ReservationStatus.CONFIRMED)) ){
                         cancelRes.setStatus(ReservationStatus.CANCELLED);
                         cancelRes.getRoom().setAvailable(true);
-                        System.out.println("Reservation " + cancelId + " has been cancelled.");
+                        System.out.println("Reservation " + cancelId + " has been cancelled\n");
                     }
                     else {
                         System.out.println("Reservation cannot be cancelled");
@@ -386,7 +409,7 @@ public class Guest extends User implements Payable {
                                 resToOut.getRoom().setAvailable(true);
                                 int invoiceNo = HotelDatabase.getAllInvoices().size() + 1 ;
                                 Invoice inv = new Invoice(invoiceNo, resToOut);
-                                inv.processPayment(chosenMethod);
+                                inv.setPaymentMethod(chosenMethod);
                                 inv.printInvoice();
                             }
                         } catch (Exception e) {
@@ -397,7 +420,7 @@ public class Guest extends User implements Payable {
                             else {System.out.println("Unexpected Error");}
                         }
                     } else {
-                        System.out.println("Invalid Reservation ID.");
+                        System.out.println("Invalid Reservation ID\n");
                     }
                     break;
 

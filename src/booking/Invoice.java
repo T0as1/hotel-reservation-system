@@ -44,4 +44,8 @@ public class Invoice {
     public double getAmount() {
         return reservation.calculateTotalCost();
     }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }
