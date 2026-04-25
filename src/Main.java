@@ -111,6 +111,9 @@ public class Main {
             }
         }
 
+        System.out.println("Enter room preferences: ");
+        newGuest.setRoomPreferences(s.nextLine());
+
         //save to database
         HotelDatabase.addGuest(newGuest);
         System.out.println("\nRegistration successful! Welcome, " + newGuest.getUsername());
@@ -121,12 +124,19 @@ public class Main {
         User currentUser = null;
         while (true) {
             try {
-                System.out.println("Enter Username: ");
+                System.out.println("0.Go back\nEnter Username: ");
                 String u = s.nextLine();
+                if(u.equals("0"))
+                    return null;
                 System.out.println("Password requires: 1 letter, 1 digit, 1 special char, min 5 characters");
                 System.out.println("Enter Password: ");
                 String p = s.nextLine();
                 currentUser = HotelDatabase.findUser(u, p);
+                if(currentUser == null)
+                {
+                    System.out.println("Username or password is incorrect ");
+                    continue;
+                }
                 break;
             } catch (InvalidUsernameException e) {
                 System.out.println("Error" + e.getMessage());
