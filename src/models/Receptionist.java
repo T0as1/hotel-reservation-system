@@ -15,9 +15,12 @@ public class Receptionist extends Staff {
 
 
     public void checkIn(Reservation reservation) {
+        if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+            System.out.println("Check-in not allowed. Reservation must be CONFIRMED first.");
+            return;
+        }
 
         reservation.setStatus(ReservationStatus.CHECKED_IN);
-
 
         System.out.println("--- Check-In Confirmation ---");
         System.out.println("Date: " + reservation.getCheckInDate());
@@ -27,9 +30,13 @@ public class Receptionist extends Staff {
 
 
     public void checkOut(Reservation reservation) {
+        if (reservation.getStatus() != ReservationStatus.CHECKED_IN) {
+            System.out.println("Check-out not allowed. Guest must be CHECKED_IN first.");
+            return;
+        }
 
-        reservation.setStatus(ReservationStatus.CHECKED_OUT);
-
+        reservation.setStatus(ReservationStatus.COMPLETED);
+        reservation.getRoom().release();
 
         System.out.println("--- Check-Out Confirmation ---");
         System.out.println("Date: " + reservation.getCheckOutDate());
