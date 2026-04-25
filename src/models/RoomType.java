@@ -35,6 +35,23 @@ public class RoomType {
         return description;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPricePerNight(double pricePerNight) {
+        this.pricePerNight = pricePerNight;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public void setDescription(String description) {
+
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "Name: " + getName() + " | Price Per Night: " + getPricePerNight() + " | Description: "

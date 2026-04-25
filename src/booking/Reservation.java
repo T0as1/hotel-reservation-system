@@ -1,5 +1,6 @@
 package booking;
 import enums.ReservationStatus;
+import models.Amenity;
 import models.Guest;
 import models.Room;
 
@@ -39,7 +40,11 @@ public class Reservation {
 
     public double calculateTotalCost()
     {
-        return calculateDuration()*room.getRoomType().getPricePerNight();
+        double totalCost = calculateDuration()*room.getRoomType().getPricePerNight();
+        for (Amenity a : this.room.getAmenities()) {
+            totalCost += a.getAdditionalCost();
+        }
+        return totalCost;
     } // price per night is determined by room type
 
 
@@ -54,7 +59,7 @@ public class Reservation {
     public String toString() {
         return "ID: " + getReservationID() + " | Guest: " + getGuest().getUsername() + " | Room: "
                 + getRoom().getRoomNumber() + " | Check in Date: " + this.checkInDate + " | Check out Date: "
-                + this.checkOutDate + " | Status: " +getStatus();
+                + this.checkOutDate + " | Status: " + getStatus();
     }
 
     //getters
@@ -83,5 +88,9 @@ public class Reservation {
     public void cancel()
     {
         this.status = ReservationStatus.CANCELLED;
+    }
+    public  LocalDate getCheckInDate(){return checkInDate;}
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
     }
 }
