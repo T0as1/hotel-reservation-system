@@ -84,7 +84,7 @@ public class Room {
     public void addAmenityToRoom(String amenity) {
         //check to ensure the same thing is not added twice to the same room
         for (Amenity a : this.amenities) {
-            if (a.getName().equalsIgnoreCase(a.getName())) {
+            if (a.getName().equalsIgnoreCase(amenity)) {
                 System.out.println("Room already has this amenity");
                 return;
             }

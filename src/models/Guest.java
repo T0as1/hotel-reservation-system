@@ -252,8 +252,9 @@ public class Guest extends User implements Payable {
                         newRes.getRoom().setAvailable(false);
 
                         System.out.println("Reservation successful! Your ID is: " + newId);
-
-                        System.out.println("Base Cost: " + newRes.calculateTotalCost());
+                        double baseCost = (newRes.getRoom().getRoomType().getPricePerNight())
+                                *(newRes.calculateDuration()); // calculates price of the room without amenities
+                        System.out.println("Base Cost: " + baseCost);
                         if(selectRoom.getAmenities() != null)
                         {
                             double totalPrice = newRes.calculateTotalCost();
@@ -350,12 +351,6 @@ public class Guest extends User implements Payable {
 
                     if (resToOut != null && resToOut.getGuest().equals(this)) {
                         double cost = resToOut.calculateTotalCost();
-                        if(resToOut.getRoom().getAmenities() != null)
-                        {
-                            for (Amenity a : resToOut.getRoom().getAmenities()) {
-                                cost += a.getAdditionalCost();
-                            }
-                        }
                         System.out.println("Your total is: " + cost);
 
                         PaymentMethod chosenMethod = null;
