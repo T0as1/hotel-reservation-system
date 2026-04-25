@@ -22,17 +22,25 @@ public class Reservation {
 
 
     //constructor:
-    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate)
-    {
+    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate) {
+        if (guest == null || room == null) {
+            throw new IllegalArgumentException("Guest and room cannot be null");
+        }
+
+        if (checkInDate == null || checkOutDate == null) {
+            throw new IllegalArgumentException("Dates cannot be null");
+        }
+
+        if (!checkInDate.isBefore(checkOutDate)) {
+            throw new IllegalArgumentException("Check-in date must be before check-out date");
+        }
+
         this.reservationID = reservationID;
         this.guest = guest;
         this.room = room;
-        this. checkInDate = checkInDate;
+        this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.status = ReservationStatus.PENDING;
-
-
-
     }
 
     public long calculateDuration()
@@ -45,7 +53,7 @@ public class Reservation {
     {
         double totalCost = calculateDuration()*room.getRoomType().getPricePerNight();
         for (Amenity a : selectedAmenities) {
-            totalCost += a.getAdditionalCost();
+            totalCost += a.getAdditionalCost() * calculateDuration();
         }
         return totalCost;
     } // price per night is determined by room type
@@ -62,7 +70,7 @@ public class Reservation {
     public String toString() {
         return "ID: " + getReservationID() + " | Guest: " + getGuest().getUsername() + " | Room: "
                 + getRoom().getRoomNumber() + " | Check in Date: " + this.checkInDate + " | Check out Date: "
-                + this.checkOutDate + " | Status: " + getStatus() + "| Amenities: "
+                + this.checkOutDate + " | Status: " + getStatus() + " | Amenities: "
                 + ((this.selectedAmenities == null) ? "None" : this.selectedAmenities );
     }
 

@@ -43,7 +43,7 @@ public class Receptionist extends Staff {
 
         while (loggedIn) {
             System.out.println("1.View All Guests\n2.View All Rooms\n3.View All Reservations\n" +
-                    "4.Check-in\n5.Check-out\n6.Add Amenity to room\n7.Logout\nChoice: ");
+                    "4. Confirm Reservation\n5.Check-in\n6.Check-out\n7.Add Amenity to room\n8.Logout\nChoice: ");
             String choice = sc.nextLine();
             switch (choice) {
                 case "1":
@@ -69,15 +69,37 @@ public class Receptionist extends Staff {
                     }
                     System.out.println("\n------------------------------");
                     break;
-
                 case "4":
+                    System.out.println("0.Go back\nEnter Reservation ID to confirm: ");
+                    try {
+                        int id = Integer.parseInt(sc.nextLine());
+
+                        if (id == 0) {
+                            break;
+                        }
+
+                        Reservation resToConfirm = findReservationByID(id);
+
+                        if (resToConfirm != null && resToConfirm.getStatus() == ReservationStatus.PENDING) {
+                            resToConfirm.setStatus(ReservationStatus.CONFIRMED);
+                            System.out.println("Reservation " + id + " confirmed successfully.");
+                        } else {
+                            System.out.println("Error: Reservation ID not found or reservation is not pending.");
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Invalid input, please input a valid ID.");
+                    }
+                    break;
+
+                case "5":
                     System.out.println("0.Go back\nEnter Reservation ID to check-in: ");
                     try{
                         int id = Integer.parseInt(sc.nextLine());
                         if(id == 0)
                             break;
                         Reservation resToCheckIn = findReservationByID(id);
-                        if(resToCheckIn != null && resToCheckIn.getStatus() == ReservationStatus.PENDING){
+                        if (resToCheckIn != null && resToCheckIn.getStatus() == ReservationStatus.CONFIRMED){
                             checkIn(resToCheckIn);
                             resToCheckIn.getRoom().setAvailable(false);
                         }
@@ -90,7 +112,7 @@ public class Receptionist extends Staff {
                     }
                     break;
 
-                case "5":
+                case "6":
                     System.out.println("0.Go back\nEnter reservation ID to check-out: ");
                     try{
                         int id = Integer.parseInt(sc.nextLine());
@@ -112,8 +134,9 @@ public class Receptionist extends Staff {
                     {
                         System.out.println("Unexpected Error");
                     }
+                    break;
 
-                case "6":
+                case "7":
                     while (true) {
                         try {
                             System.out.println("\n---Add Amenity to Room---");
@@ -158,7 +181,7 @@ public class Receptionist extends Staff {
                         }
                     }
                     break;
-                case "7":
+                case "8":
                     System.out.println("Logging out...");
                     loggedIn = false;
                     break;

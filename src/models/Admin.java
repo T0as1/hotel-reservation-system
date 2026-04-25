@@ -35,6 +35,7 @@ public class Admin extends Staff implements Manageable {
             if (rt.getName().equalsIgnoreCase(name)) {
 
                 rt.setPricePerNight(newPrice);
+                rt.setCapacity(newCapacity);
                 rt.setDescription(newDescription);
                 System.out.println("Room type updated successfully.");
                 return;
@@ -352,8 +353,9 @@ public class Admin extends Staff implements Manageable {
                                 4.Delete Room
                                 0.Go Back""");
             String c = sc.nextLine();
-            if(Integer.parseInt(c) == 0)
+            if (c.equals("0")) {
                 return;
+            }
             switch (c){
 
                 case "1":
@@ -599,11 +601,10 @@ public class Admin extends Staff implements Manageable {
                         updateAmenityName = sc.nextLine();
                         if (updateAmenityName.equals("0"))
                             break;
-                        if (HotelDatabase.getAmenityByName(updateAmenityName) != null) {
-                            System.out.println("Error: Cannot rename to " + updateAmenityName
-                                    + " because it already exists");
-                            continue;
-                        }
+                            if (HotelDatabase.getAmenityByName(updateAmenityName) == null) {
+                                System.out.println("Error: Amenity not found.");
+                                continue;
+                            }
                         break;
 
                     } catch (Exception e) {

@@ -2,151 +2,162 @@ import data.HotelDatabase;
 import models.*;
 import enums.*;
 import exceptions.*;
+
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        User currentUser;
+
         System.out.println("==========================================");
         System.out.println("              HOTEL MENU                  ");
-        System.out.println("==========================================\n");
+        System.out.println("==========================================");
+
         while (true) {
-            System.out.println("1.Guest Registration\n2.Login\n3.Exit\nChoice: ");
+            System.out.println("""
+                    
+                    1. Guest Registration
+                    2. Login
+                    3. Exit
+                    """);
+            System.out.print("Choice: ");
+
             String choice = input.nextLine();
+
             switch (choice) {
                 case "1":
-                    handleRegistration(input);
+                    Guest newGuest = handleRegistration(input);1
+                    newGuest.showDashboard(input);
                     break;
+
                 case "2":
-                    User loggedinUser = handleLogin(input);
-                    if(loggedinUser != null) {
-                        if(loggedinUser instanceof Guest){
-                            Guest g = (Guest) loggedinUser;
-                            g.showDashboard(input);
-                        }
-                        else if(loggedinUser instanceof Receptionist){
-                            Receptionist rec = (Receptionist) loggedinUser;
-                            rec.showDashboard(input);
-                        }
-                        else if(loggedinUser instanceof Admin){
-                            Admin a = (Admin) loggedinUser;
-                            a.showDashboard(input);
-                        }
+                    User loggedInUser = handleLogin(input);
+
+                    if (loggedInUser instanceof Guest guest) {
+                        guest.showDashboard(input);
+                    } else if (loggedInUser instanceof Receptionist receptionist) {
+                        receptionist.showDashboard(input);
+                    } else if (loggedInUser instanceof Admin admin) {
+                        admin.showDashboard(input);
                     }
                     break;
 
                 case "3":
                     System.out.println("Thanks for visiting us!");
+                    input.close();
                     return;
+
                 default:
-                    System.out.println("Invalid choice, try again");
+                    System.out.println("Invalid choice. Please enter 1, 2, or 3.");
             }
         }
-
     }
 
-    public static void handleRegistration(Scanner s) {
-        System.out.println("\n---Registration---");
+    public static Guest handleRegistration(Scanner input) {
+        System.out.println("\n--- Guest Registration ---");
+
         Guest newGuest = new Guest();
 
-        // Username Loop
         while (true) {
             try {
                 System.out.print("Enter Username: ");
-                String username = s.nextLine();
-                newGuest.setUsername(username); // Throws EmptyUserNameException if invalid
-                break; // If no exception, break the loop and move on
+                String username = input.nextLine();
+
+                if (HotelDatabase.findGuestByUsername(username) != null) {
+                    System.out.println("Error: Username already exists.");
+                    continue;
+                }
+
+                newGuest.setUsername(username);
+                break;
+
             } catch (InvalidUsernameException e) {
                 System.out.println("Error: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("Registration failed: Unexpected input");
-            }
-        }
-        // Password loop
-        while (true) {
-            try {
-                System.out.println("Password requires: 1 letter, 1 digit, 1 special char, min 5 characters");
-                System.out.println("Enter Password: ");
-                String pass = s.nextLine();
-                newGuest.setPassword(pass);
-                break;
-            } catch (InvalidPasswordException e) {
-                System.out.println("Error: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("Registration failed: Unexpected input");
             }
         }
 
-        // dob loop
         while (true) {
             try {
-                System.out.println("Enter Date of Birth (YYYY-MM-DD): ");
-                String dobInput = s.nextLine();
-                LocalDate dob = LocalDate.parse(dobInput); // Converts String to LocalDate
-                newGuest.setDateOfBirth(dob); // Throws dobException if invalid year
+                System.out.println("Password requires: 1 letter, 1 digit, 1 special character, minimum 5 characters.");
+                System.out.print("Enter Password: ");
+
+                String password = input.nextLine();
+                newGuest.setPassword(password);
                 break;
-            } catch (dobException e) {
+
+            } catch (InvalidPasswordException e) {
                 System.out.println("Error: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("Error: Invalid date format. Please use YYYY-MM-DD.");
+            }
+        }
+
+        while (true) {
+            try {
+                System.out.print("Enter Date of Birth (YYYY-MM-DD): ");
+                LocalDate dob = LocalDate.parse(input.nextLine());
+
+                newGuest.setDateOfBirth(dob);
+                break;
+
+            } catch (DateTimeParseException e) {
+                System.out.println("Error: Invalid date format. Use YYYY-MM-DD.");
+            } catch (DobException e) {
+                System.out.println("Error: " + e.getMessage());
             }
         }
 
         System.out.print("Enter Address: ");
-        newGuest.setAddress(s.nextLine());
+        newGuest.setAddress(input.nextLine());
 
-        // Gender Loop (Handling Enums)
         while (true) {
             try {
                 System.out.print("Enter Gender (MALE/FEMALE): ");
-                String genderInput = s.nextLine().toUpperCase();
-                Gender gender = Gender.valueOf(genderInput);
+                Gender gender = Gender.valueOf(input.nextLine().toUpperCase());
+
                 newGuest.setGender(gender);
                 break;
+
             } catch (IllegalArgumentException e) {
-                System.out.println("Error: Please enter either MALE or FEMALE.");
+                System.out.println("Error: Please enter MALE or FEMALE.");
             }
         }
 
-        System.out.println("Enter room preferences: ");
-        newGuest.setRoomPreferences(s.nextLine());
+        System.out.print("Enter Room Preferences: ");
+        newGuest.setRoomPreferences(input.nextLine());
 
-        //save to database
+        newGuest.setBalance(2000.0);
+
         HotelDatabase.addGuest(newGuest);
-        System.out.println("\nRegistration successful! Welcome, " + newGuest.getUsername());
+
+        System.out.println("\nRegistration successful. Welcome, " + newGuest.getUsername() + "!");
+        return newGuest;
     }
 
-    public static User handleLogin(Scanner s) {
-        System.out.println("---Login---");
-        User currentUser = null;
+    public static User handleLogin(Scanner input) {
+        System.out.println("\n--- Login ---");
+
         while (true) {
-            try {
-                System.out.println("0.Go back\nEnter Username: ");
-                String u = s.nextLine();
-                if(u.equals("0"))
-                    return null;
-                System.out.println("Password requires: 1 letter, 1 digit, 1 special char, min 5 characters");
-                System.out.println("Enter Password: ");
-                String p = s.nextLine();
-                currentUser = HotelDatabase.findUser(u, p);
-                if(currentUser == null)
-                {
-                    System.out.println("Username or password is incorrect ");
-                    continue;
-                }
-                break;
-            } catch (InvalidUsernameException e) {
-                System.out.println("Error" + e.getMessage());
-            } catch (InvalidPasswordException e) {
-                System.out.println("Error: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("Login failed: Unexpected input");
+            System.out.print("0. Go back\nEnter Username: ");
+            String username = input.nextLine();
+
+            if (username.equals("0")) {
+                return null;
             }
 
+            System.out.print("Enter Password: ");
+            String password = input.nextLine();
+
+            User user = HotelDatabase.findUser(username, password);
+
+            if (user == null) {
+                System.out.println("Username or password is incorrect.");
+                continue;
+            }
+
+            System.out.println("Login successful. Welcome, " + user.getUsername() + "!");
+            return user;
         }
-        return currentUser;
     }
 }
