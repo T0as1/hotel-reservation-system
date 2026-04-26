@@ -15,15 +15,18 @@ abstract public class User {
           this.setPassword(password);
      }
 
-    public void setUsername(String username){
-        this.username = username;
+    public void setUsername(String username) {
         if (username == null || username.isBlank()) {
             throw new InvalidUsernameException("Username cannot be empty");
         }
-        for(char c : username.toCharArray()){
-            if(!Character.isLetter(c) && !Character.isDigit(c))
-                throw new InvalidUsernameException("Username can not have special characters or spaces");
+
+        for (char c : username.toCharArray()) {
+            if (!Character.isLetter(c) && !Character.isDigit(c)) {
+                throw new InvalidUsernameException("Username cannot have special characters or spaces");
+            }
         }
+
+        this.username = username;
     }
 
     public String getUsername() {

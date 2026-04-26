@@ -22,8 +22,8 @@ public class HotelDatabase {
     private static final ArrayList<Amenity> amenities = new ArrayList<>();
 
     // Admin and receptionist
-    public static Admin admin = new Admin("Admin1", "Y0u$ef", Role.ADMIN, LocalDate.of(1999,10,14), 40 );
-    public static Receptionist receptionist = new Receptionist("Rec1","R3cepti@n", Role.RECEPTIONIST, 45,LocalDate.of(2000,9,15) );
+    private static Admin admin = new Admin("Admin1", "Y0u$ef", Role.ADMIN, LocalDate.of(1999,10,14), 40 );
+    private static Receptionist receptionist = new Receptionist("Rec1","R3cepti@n", Role.RECEPTIONIST, 45,LocalDate.of(2000,9,15) );
 
     // Dummy data (runs automatically by using static)
     static {
@@ -86,9 +86,16 @@ public class HotelDatabase {
     //FINDERS
     public static Guest findGuestByUsername(String username){
         for (Guest g : guests){
-            if (g.getUsername().equals(username)){
+            if (g.getUsername().equalsIgnoreCase(username)){
                 return g;
             }
+        }
+        return null;
+    }
+
+    public static Invoice findInvoiceById(int id) {
+        for (Invoice invoice : invoices) {
+            // needs getInvoiceID() in Invoice
         }
         return null;
     }
@@ -125,6 +132,16 @@ public class HotelDatabase {
             }
         }
         return null;
+    }
+    public static boolean isRoomAvailableForDates(Room room, LocalDate checkIn, LocalDate checkOut) {
+        for (Reservation r : reservations) {
+            if (r.getRoom().equals(room)
+                    && r.getStatus() != ReservationStatus.CANCELLED
+                    && r.overlapsWith(checkIn, checkOut)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // ====================== ROOM TYPE METHODS ======================

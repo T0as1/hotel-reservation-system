@@ -6,7 +6,6 @@ import booking.Reservation;
 import exceptions.*;
 import java.util.List;
 import java.time.LocalDate;
-import java.util.Scanner;
 
 public abstract class Staff extends User{
     private Role role;
@@ -37,7 +36,7 @@ public abstract class Staff extends User{
     public void setDateOfBirth(LocalDate dateOfBirth) {
         if (dateOfBirth == null) {
 
-            throw new dobException("Date of birth cannot be null");
+            throw new DobException("Date of birth cannot be null");
         }
         this.dateOfBirth = dateOfBirth;
     }
