@@ -3,6 +3,7 @@ package data;
 import booking.Invoice;
 import booking.Reservation;
 import enums.Gender;
+import enums.ReservationStatus;
 import enums.Role;
 import models.*;
 
@@ -49,10 +50,10 @@ public class HotelDatabase {
     }
 
     //GETTERS
-    public static List<Room> getAvailableRooms(){
+    public static List<Room> getAvailableRooms(LocalDate start, LocalDate end){
         List<Room> available = new ArrayList<>();
         for (Room r : rooms) {
-            if (r.isAvailable())
+            if (r.isAvailable() && !HotelDatabase.isRoomClashing(r.getRoomNumber(),start, end))
                 available.add(r);
         }
         return available;
@@ -196,6 +197,25 @@ public class HotelDatabase {
         for (Reservation res : getAllReservations()) {
             if (res.getRoom().getRoomNumber() == roomNumber) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    //This method checks if new reservation clashes with another one in the same room at the same time
+
+    public static boolean isRoomClashing(int roomNum, LocalDate newIn, LocalDate newOut) {
+        for (Reservation res : getAllReservations()) {
+            // if room number matches and reservation status is NOT: cancelled,checkedOut,completed
+            if (res.getRoom().getRoomNumber() == roomNum && !(res.getStatus().equals(ReservationStatus.CANCELLED)
+            || res.getStatus().equals(ReservationStatus.CHECKED_OUT) || res.getStatus().equals(ReservationStatus.COMPLETED))) {
+
+                //if the room is the same, check if the new check-in date is before the old checkout date
+                //and if the new check-out is after the old check-in date, this means a clash is found
+
+                if (newIn.isBefore(res.getCheckOutDate()) && newOut.isAfter(res.getCheckInDate())) {
+                    return true;
+                }
             }
         }
         return false;

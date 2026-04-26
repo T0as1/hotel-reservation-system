@@ -22,28 +22,24 @@ public class Reservation {
 
 
     //constructor:
-    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate)
-    {
+    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate) {
         this.reservationID = reservationID;
         this.guest = guest;
         this.room = room;
-        this. checkInDate = checkInDate;
+        this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.status = ReservationStatus.PENDING;
 
 
-
     }
 
-    public long calculateDuration()
-    {
+    public long calculateDuration() {
 
-        return ChronoUnit.DAYS.between(checkInDate,checkOutDate);
+        return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
     }
 
-    public double calculateTotalCost()
-    {
-        double totalCost = calculateDuration()*room.getRoomType().getPricePerNight();
+    public double calculateTotalCost() {
+        double totalCost = calculateDuration() * room.getRoomType().getPricePerNight();
         for (Amenity a : selectedAmenities) {
             totalCost += a.getAdditionalCost();
         }
@@ -51,10 +47,7 @@ public class Reservation {
     } // price per night is determined by room type
 
 
-
-
-    public boolean overlapsWith(LocalDate newStart , LocalDate newEnd)
-    {
+    public boolean overlapsWith(LocalDate newStart, LocalDate newEnd) {
         return newStart.isBefore(this.checkOutDate) && newEnd.isAfter(this.checkInDate);
     }
 
@@ -63,7 +56,7 @@ public class Reservation {
         return "ID: " + getReservationID() + " | Guest: " + getGuest().getUsername() + " | Room: "
                 + getRoom().getRoomNumber() + " | Check in Date: " + this.checkInDate + " | Check out Date: "
                 + this.checkOutDate + " | Status: " + getStatus() + "| Amenities: "
-                + ((this.selectedAmenities == null) ? "None" : this.selectedAmenities );
+                + ((this.selectedAmenities == null) ? "None" : this.selectedAmenities);
     }
 
     //getters
@@ -71,14 +64,12 @@ public class Reservation {
         return reservationID;
     }
 
-    public ReservationStatus getStatus()
-    {
+    public ReservationStatus getStatus() {
         return status;
     }
 
     //update reservation status
-    public void setStatus(ReservationStatus newStatus)
-    {
+    public void setStatus(ReservationStatus newStatus) {
         this.status = newStatus;
     }
 
@@ -89,11 +80,14 @@ public class Reservation {
     public Room getRoom() {
         return room;
     }
-    public void cancel()
-    {
+    public void cancel(){
         this.status = ReservationStatus.CANCELLED;
     }
-    public  LocalDate getCheckInDate(){return checkInDate;}
+
+    public LocalDate getCheckInDate() {
+        return checkInDate;
+    }
+
     public LocalDate getCheckOutDate() {
         return checkOutDate;
     }

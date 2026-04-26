@@ -130,7 +130,7 @@ public class Receptionist extends Staff {
 
                             Amenity amenityToAdd = HotelDatabase.getAmenityByName(nameInput);
                             if (amenityToAdd == null) {
-                                System.out.println("Error: '" + nameInput + "' is not in the database, try again");
+                                System.out.println("Error: " + nameInput + " is not in the database, try again");
                                 continue;
                             }
 

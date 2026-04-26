@@ -149,8 +149,8 @@ public class Admin extends Staff implements Manageable {
             System.out.println("""
                                 1.Add Room Type
                                 2.View Room Types
-                                3.Update Room Types
-                                4.Delete Room Types
+                                3.Update Room Type
+                                4.Delete Room Type
                                 0.Go back""");
             String c = sc.nextLine();
             switch (c)
@@ -532,7 +532,7 @@ public class Admin extends Staff implements Manageable {
         {
             System.out.println("""
                     1.Add Amenity
-                    2.View Amenity
+                    2.View Amenities
                     3.Update Amenity
                     4.Delete Amenity
                     0.Go back""");
@@ -626,7 +626,7 @@ public class Admin extends Staff implements Manageable {
                         break;
 
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                            System.out.println("Unexpected error");;
                     }
                     }
                     while (true)
