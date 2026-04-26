@@ -43,7 +43,7 @@ public class Receptionist extends Staff {
 
         while (loggedIn) {
             System.out.println("1.View All Guests\n2.View All Rooms\n3.View All Reservations\n" +
-                    "4.Check-in\n5.Check-out\n6.Add Amenity to room\n7.Logout\nChoice: ");
+                    "4.Check-in\n5.Check-out\n6.Logout\nChoice: ");
             String choice = sc.nextLine();
             switch (choice) {
                 case "1":
@@ -114,51 +114,6 @@ public class Receptionist extends Staff {
                     }
 
                 case "6":
-                    while (true) {
-                        try {
-                            System.out.println("\n---Add Amenity to Room---");
-                            System.out.println("---Official Amenities---");
-                            for(Amenity a : HotelDatabase.getAllAmenities()){
-                                System.out.println(a);
-                            }
-                            System.out.println("------------------------");
-                            System.out.print("0.Go Back\nEnter Amenity Name: ");
-
-                            String nameInput = sc.nextLine();
-                            if (nameInput.equals("0")) break;
-
-
-                            Amenity amenityToAdd = HotelDatabase.getAmenityByName(nameInput);
-                            if (amenityToAdd == null) {
-                                System.out.println("Error: " + nameInput + " is not in the database, try again");
-                                continue;
-                            }
-
-                            System.out.print("0.Go back\nEnter Room Number: ");
-                            String roomInput = sc.nextLine();
-                            if (roomInput.equals("0")) break;
-
-                            int rNum = Integer.parseInt(roomInput);
-                            Room room = HotelDatabase.findRoomByNumber(rNum);
-
-                            if (room == null) {
-                                System.out.println("Error: Room " + rNum + " not found. Please try again");
-                                continue;
-                            }
-
-                            room.addAmenityToRoom(amenityToAdd.getName());
-                            break;
-
-                        } catch (NumberFormatException e) {
-                            System.out.println("Invalid input: Room Number must be a numeric value");
-
-                        } catch (Exception e) {
-                            System.out.println("Unexpected error");
-                            break;
-                        }
-                    }
-                    break;
-                case "7":
                     System.out.println("Logging out...");
                     loggedIn = false;
                     break;
