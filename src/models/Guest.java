@@ -117,15 +117,16 @@ public class Guest extends User implements Payable {
         return true;
     }
 
-    public boolean login(String username, String password){
-        Guest g = HotelDatabase.findGuestByUsername(username);
-        if (g!= null && g.password.equals(password))
+    public boolean login(String username, String password) {
+
+        if (this.username.equals(username) && this.password.equals(password)) {
             return true;
+        }
         return false;
     }
 
-    public List<Room> viewAvailableRooms(){
-       return HotelDatabase.getAvailableRooms();
+    public List<Room> viewAvailableRooms(LocalDate start, LocalDate end){
+       return HotelDatabase.getAvailableRooms(start, end);
     }
 
     public boolean makeReservation(Reservation res){
@@ -190,11 +191,55 @@ public class Guest extends User implements Payable {
             String choice = sc.nextLine();
             switch (choice){
                 case "1":
-                    System.out.println("\n---Available Rooms List---");
-                    for(Room r: viewAvailableRooms()){
-                        System.out.println(r);
+                    LocalDate start = null;
+                    LocalDate end = null;
+                    System.out.println("\n0.Go back\n1.Rooms available for today\n" +
+                            "2.Rooms available for a specific date range");
+                    String d = sc.nextLine();
+                    if(d.equals("0"))
+                        break;
+                    if(d.equals("1")) {
+                        System.out.println("\n---Rooms Available for today---");
+                        for (Room r : viewAvailableRooms(LocalDate.now(), LocalDate.now().plusDays(1))) {
+                            System.out.println(r);
+                        }
+                        System.out.println("\n---------------------------");
+                        break;
                     }
-                    System.out.println("\n---------------------------");
+                    if(d.equals("2")) {
+                       while(true) {
+                          try {
+                               System.out.print("0.Go back\nPlease enter start date (YYYY-MM-DD): ");
+                               String s = sc.nextLine();
+                               if (s.equals("0")) {
+                                   return;
+                               }
+                               LocalDate temp = LocalDate.parse(s);
+                               // if cond. to check that check in date is not in the past
+                               if (temp.isBefore(LocalDate.now())) {
+                                   System.out.print("Error: Date in the past");
+                                   continue;
+                               } else
+                                   start = temp;
+
+                               System.out.print("Enter end date (YYYY-MM-DD): ");
+                               end = LocalDate.parse(sc.nextLine());
+                               if (!(start.isBefore(end))) {
+                                   System.out.println("Error: Start date must be before end date");
+                                   continue;
+                               }
+                               break;
+                          } catch (Exception e) {
+                              System.out.println("Error: please input a valid date");
+                          }
+                       }
+                            System.out.println("\n---Rooms Available from " + start + " to " + end + " ---");
+                            for (Room r : viewAvailableRooms(start, end)) {
+                                System.out.println(r);
+                            }
+                            System.out.println("\n---------------------------");
+                            break;
+                        }
                     break;
 
                 case "2": try{
@@ -219,24 +264,32 @@ public class Guest extends User implements Payable {
                     LocalDate inDate = null;
                     LocalDate outDate = null;
                     LocalDate today = LocalDate.now();
-                    if(selectRoom != null && selectRoom.isAvailable()){
+                    if(selectRoom != null && selectRoom.isAvailable()) {
                         // This loop is to ensure dates are input correctly, then it is broken and flow continues;
-                        while(true) {
+                        while (true) {
                             try {
-                                System.out.print("Enter Check-In Date (YYYY-MM-DD): ");
-                                LocalDate temp = LocalDate.parse(sc.nextLine());
-                                // if cond. to check that check in date is not in the past
-                                if(temp.isBefore(today)) {
-                                    System.out.println("Error: Please enter a valid date");
-                                    continue;
+                                System.out.print("0.Go back\nEnter Check-In Date (YYYY-MM-DD): ");
+                                String input = sc.nextLine();
+                                if (input.equals("0")) {
+                                    return;
                                 }
-                                else
+                                LocalDate temp = LocalDate.parse(input);
+                                // if cond. to check that check in date is not in the past
+                                if (temp.isBefore(today)) {
+                                    System.out.println("Error: Date in the past");
+                                    continue;
+                                } else
                                     inDate = temp;
 
                                 System.out.print("Enter Check-Out Date (YYYY-MM-DD): ");
                                 outDate = LocalDate.parse(sc.nextLine());
-                                if(!(inDate.isBefore(outDate))) {
+                                if (!(inDate.isBefore(outDate))) {
                                     System.out.println("Error: Check-in date must be before Check-out date");
+                                    continue;
+                                }
+                                if (HotelDatabase.isRoomClashing(resRoomNo, inDate, outDate)) {
+                                    System.out.println("Error: Room " + resRoomNo + " is already booked for these dates.");
+                                    System.out.println("Please try a different room or different dates.");
                                     continue;
                                 }
                                 break;
@@ -261,22 +314,38 @@ public class Guest extends User implements Payable {
 
                             Amenity selected = HotelDatabase.getAmenityByName(c);
 
-                            if (selected != null && !newRes.getSelectedAmenities().contains(selected)) {
+                            if (selected == null) {
+                                System.out.println("Error: Amenity not found.");
+                                continue;
+                            }
 
+                            boolean alreadyInRoom = false;
+                            if (selectRoom.getAmenities() != null) {
+                                for (Amenity roomAmenity : selectRoom.getAmenities()) {
+                                    if (roomAmenity.getName().equalsIgnoreCase(c)) {
+                                        alreadyInRoom = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (alreadyInRoom) {
+                                System.out.println("Error: Amenity is already in room " + selectRoom.getRoomNumber()
+                                        + " and included in its base price.");
+                            } else if (newRes.getSelectedAmenities().contains(selected)) {
+                                System.out.println("Error: Amenity already selected.");
+                            } else {
                                 newRes.getSelectedAmenities().add(selected);
                                 System.out.println(selected.getName() + " added to your reservation.");
-                            } else if (newRes.getSelectedAmenities().contains(selected)) {
-                                System.out.println("Error: Amenity already selected");
-                            } else {
-                                System.out.println("Error: Amenity not found.");
                             }
                         }
+
                         HotelDatabase.addReservation(newRes);
-                        newRes.getRoom().setAvailable(false);
+
 
                         System.out.println("Reservation successful! Your ID is: " + newId);
                         double baseCost = (newRes.getRoom().getRoomType().getPricePerNight())
-                                *(newRes.calculateDuration()); // calculates price of the room without amenities
+                                *(newRes.calculateDuration()); // calculates price of the room without selected amenities
                         System.out.println("Base Cost: " + baseCost);
                         if(selectRoom.getAmenities() != null)
                         {
@@ -287,12 +356,13 @@ public class Guest extends User implements Payable {
 
                             System.out.println("---------------------------");
                             System.out.println("Total Cost: " + totalPrice+"\n");
-                        }
-                        break;
-                    } else {
+                            break;
+
+                        } else {
                         System.out.println("Room is not available or does not exist.");
                         break;
                     }
+                }
                 } catch (Exception e) {
                     System.out.println("Error: Invalid input, please input a valid room number");
                 }
@@ -301,9 +371,9 @@ public class Guest extends User implements Payable {
                 case "3":
                     System.out.println("\n---View My Reservations---");
                     boolean hasRes = false;
-                    for(Reservation res: HotelDatabase.getAllReservations()){
-                        if(res.getGuest().equals(this))
-                        {
+                    for (Reservation res : HotelDatabase.getAllReservations()) {
+
+                        if (res.getGuest().getUsername().equals(this.getUsername())) {
                             System.out.println(res);
                             hasRes = true;
                         }
@@ -321,14 +391,15 @@ public class Guest extends User implements Payable {
                     while(cancelId == -1) {
                         try {
                             cancelId = Integer.parseInt(sc.nextLine());
-                            if(cancelId == 0)
-                                break;
+
                         } catch (NumberFormatException e){
                                 System.out.println("Please enter a valid reservation ID");
                             } catch (Exception e){
                                 System.out.println("Unexpected error");
                             }
                         }
+                    if(cancelId == 0)
+                        break;
                     Reservation cancelRes = HotelDatabase.findReservationById(cancelId);
                     if(cancelRes == null)
                     {
@@ -406,7 +477,6 @@ public class Guest extends User implements Payable {
 
                             if (this.pay(cost)) {
                                 resToOut.setStatus(ReservationStatus.CHECKED_OUT);
-                                resToOut.getRoom().setAvailable(true);
                                 int invoiceNo = HotelDatabase.getAllInvoices().size() + 1 ;
                                 Invoice inv = new Invoice(invoiceNo, resToOut);
                                 inv.setPaymentMethod(chosenMethod);
