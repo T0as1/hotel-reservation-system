@@ -1,5 +1,6 @@
 package models;
 
+import booking.Reservation;
 import data.HotelDatabase;
 import enums.Role;
 import interfaces.Manageable;
@@ -242,6 +243,16 @@ public class Admin extends Staff implements Manageable {
                                 System.out.println("Error: Room type " + rtNUpdated + " does not exist");
                                 continue;
                             }
+                            for (Room r : HotelDatabase.getAllRooms()) {
+                                if (r.getRoomType().getName().equalsIgnoreCase(rtNUpdated)) {
+                                    // Check if THIS specific room is busy
+                                    if (HotelDatabase.isRoomBusy(r.getRoomNumber())) {
+                                        System.out.println("Error: Cannot update room type " + rtNUpdated
+                                                + ", room " + r.getRoomNumber() + " is currently reserved.");
+                                        return;
+                                    }
+                                }
+                            }
                             break;
                         } catch (Exception e){
                             System.out.println("Unexpected error");}
@@ -299,24 +310,25 @@ public class Admin extends Staff implements Manageable {
                     String rtNDelete = null;
                     while (true) {
                        try {
-                           System.out.println("0.Go back\nEnter the room type name to be deleted:");
+                           System.out.println("0.Go back\nEnter the exact room type name to be deleted:");
                            rtNDelete = sc.nextLine();
 
-                           if(HotelDatabase.findRoomTypeByName(rtNDelete) == null)
-                           {
-                               System.out.println("Error: Room Type not found");
-                               continue;
-                           }
                            if (rtNDelete.equals("0"))
                            {
                                break;
                            }
+                           if(HotelDatabase.findRoomTypeByName(rtNDelete) == null)
+                           {
+                               System.out.println("Error: Room type not found");
+                               continue;
+                           }
+
                            boolean isUsed = false;
                            for (Room r : HotelDatabase.getAllRooms()) {
 
                                if (r.getRoomType().getName().equalsIgnoreCase(rtNDelete)) {
-                                   System.out.println("Error: Cannot delete Room Type '" + rtNDelete + "'" +
-                                           ", Room " + r.getRoomNumber() + " is currently using it");
+                                   System.out.println("Error: Cannot delete room type " + rtNDelete + " " +
+                                           ", room " + r.getRoomNumber() + " is currently using it");
                                    isUsed = true;
                                    break;
                                }
@@ -347,7 +359,7 @@ public class Admin extends Staff implements Manageable {
         while (true){
             System.out.println("""
                                 1.Add Room
-                                2.View Room
+                                2.View Rooms
                                 3.Update Room
                                 4.Delete Room
                                 0.Go Back""");
@@ -463,7 +475,7 @@ public class Admin extends Staff implements Manageable {
                         System.out.println(" Error: Room Type " + typeName + " not found.");
                         continue;
                     }
-                    if (!HotelDatabase.findRoomByNumber(updateRoomNumber).isAvailable()) {
+                    if (HotelDatabase.isRoomBusy(updateRoomNumber)) {
                         System.out.println("Error: Cannot update Room " + updateRoomNumber + " because it is currently reserved or occupied.");
                         continue;
                     }
@@ -491,7 +503,7 @@ public class Admin extends Staff implements Manageable {
                                 System.out.println("Error: Room not found");
                                 continue;
                             }
-                            else if(!roomToDelete.isAvailable()){
+                            else if(HotelDatabase.isRoomBusy(deleteRoomNumber) || !roomToDelete.isAvailable()){
                                 System.out.println("Error: Cannot delete room " + deleteRoomNumber
                                 + " because it is occupied or reserved");
                             }
@@ -594,22 +606,29 @@ public class Admin extends Staff implements Manageable {
                     double updateAmenityAddCost = 0.0;
                     while(true)
                     {
-                        System.out.println("0.Go back\nEnter amenity name to update ");
+                        System.out.println("0.Go back\nEnter amenity name to be updated ");
                         try {
                         updateAmenityName = sc.nextLine();
-                        if (updateAmenityName.equals("0"))
-                            break;
-                        if (HotelDatabase.getAmenityByName(updateAmenityName) != null) {
-                            System.out.println("Error: Cannot rename to " + updateAmenityName
-                                    + " because it already exists");
+                        if (updateAmenityName.equals("0")) {
+                            return;
+                        }
+                        if (HotelDatabase.getAmenityByName(updateAmenityName) == null) {
+                            System.out.println("Error: Amenity not found");
                             continue;
                         }
+                        //checks if the amenity is used in either a room or a reservation
+                        String usageLocation = HotelDatabase.getAmenityUsage(updateAmenityName);
+                        if (usageLocation != null) {
+                            System.out.println("Error: Cannot update " + updateAmenityName + ", it is currently tied to " + usageLocation);
+                            continue;
+                        }
+
                         break;
 
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }
+                    }
                     while (true)
                     {
                         System.out.println("Enter new Amenity description: ");
@@ -646,30 +665,24 @@ public class Admin extends Staff implements Manageable {
                     try {
                         deleteAmenityName = sc.nextLine();
 
+                        if (deleteAmenityName.equals("0")) {
+                            return;
+                        }
                         if (HotelDatabase.getAmenityByName(deleteAmenityName) == null) {
                             System.out.println("Error: Amenity not found");
                             continue;
                         }
-                        if (deleteAmenityName.equals("0")) {
-                            break;
+
+                        String usageLocation = HotelDatabase.getAmenityUsage(deleteAmenityName);
+                        if (usageLocation != null) {
+                            System.out.println("Error: Cannot delete " + deleteAmenityName + " because it is in use by " + usageLocation);
+                            continue;
                         }
-                        boolean isUsed = false;
-                        for (Room r : HotelDatabase.getAllRooms()) {
-                            for (Amenity a : r.getAmenities()) {
-                                if (a.getName().equalsIgnoreCase(deleteAmenityName)) {
-                                    System.out.println("Error: Cannot delete " + deleteAmenityName +
-                                            ", it is currently in use by Room " + r.getRoomNumber());
-                                    isUsed = true;
-                                    break;
-                                }
-                                break;
-                            }
-                        }
-                        if (!isUsed) {
-                            deleteAmenity(deleteAmenityName);
-                            System.out.println("Amenity " + deleteAmenityName + " deleted successfully");
-                            break;
-                        }
+
+                        deleteAmenity(deleteAmenityName);
+                        System.out.println("Amenity " + deleteAmenityName + " deleted successfully");
+                        break;
+
 
                     } catch (Exception e) {
                         System.out.println("Unexpected error");

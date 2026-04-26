@@ -163,9 +163,42 @@ public class HotelDatabase {
         return null;
     }
 
+    public static String getAmenityUsage(String amenityName) {
+        // Check fixed room amenities
+        for (Room r : getAllRooms()) {
+            for (Amenity a : r.getAmenities()) {
+                if (a.getName().equalsIgnoreCase(amenityName)) {
+                    return "Room " + r.getRoomNumber();
+                }
+            }
+        }
+
+        //Check optional reservation amenities
+        for (Reservation res : getAllReservations()) {
+            for (Amenity a : res.getSelectedAmenities()) {
+                if (a.getName().equalsIgnoreCase(amenityName)) {
+                    return "Reservation #" + res.getReservationID();
+                }
+            }
+        }
+
+        return null;
+    }
+
     // ====================== ROOM METHODS ======================
     public static void deleteRoom(int roomNumber) {
         rooms.removeIf(r -> r.getRoomNumber() == roomNumber);
+    }
+
+    //Checks if the room is reserved
+
+    public static boolean isRoomBusy(int roomNumber) {
+        for (Reservation res : getAllReservations()) {
+            if (res.getRoom().getRoomNumber() == roomNumber) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
