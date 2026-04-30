@@ -18,8 +18,25 @@ public class Amenity {
     public String getDescription() {
         return description;
     }
-
     public double getAdditionalCost() {
         return additionalCost;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAdditionalCost(double cost) {
+        if (cost < 0)
+            throw new IllegalArgumentException("Cost cannot be negative");
+        this.additionalCost = cost;
+    }
+    @Override
+    public String toString() {
+        return "Name: " + getName() + " | Description: " + getDescription() + " | Additional Cost: " + getAdditionalCost();
     }
 }
