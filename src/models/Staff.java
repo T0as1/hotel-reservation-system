@@ -7,16 +7,13 @@ import exceptions.*;
 import java.util.List;
 import java.time.LocalDate;
 
-public abstract class Staff {
-    private String username;
-    private String password;
+public abstract class Staff extends User{
     private Role role;
     private int workingHours;
     private LocalDate dateOfBirth;
 
     public Staff(String username, String password, Role role, int workingHours, LocalDate dateOfBirth) {
-        setUsername(username);
-        setPassword(password);
+       super(username, password);
         setDateOfBirth(dateOfBirth);
         setRole(role);
         setWorkingHours(workingHours);
@@ -39,27 +36,10 @@ public abstract class Staff {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         if (dateOfBirth == null) {
 
-            throw new dobException("Date of birth cannot be null");
+            throw new DobException("Date of birth cannot be null");
         }
         this.dateOfBirth = dateOfBirth;
     }
-
-    public void setUsername(String username) {
-        if (username == null || username.trim().isEmpty()) {
-
-            throw new EmptyUserNameException("Username cannot be empty");
-        }
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        if (password == null || password.length() < 5) {
-
-            throw new InvalidPasswordException("Password must be at least 5 characters long");
-        }
-        this.password = password;
-    }
-
 
     public void setRole(Role role) {
         if (role == null) {
@@ -80,6 +60,4 @@ public abstract class Staff {
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public Role getRole() { return role; }
     public int getWorkingHours() { return workingHours; }
-    public String getPassword() { return password; }
-    public String getUsername() { return username; }
 }
