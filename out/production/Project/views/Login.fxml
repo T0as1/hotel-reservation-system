@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.LoginController"
+            prefWidth="880" prefHeight="560"
+            styleClass="root-pane">
+
+    <!-- LEFT PANEL — branding -->
+    <left>
+        <VBox styleClass="left-panel" prefWidth="380" alignment="CENTER" spacing="20">
+            <padding><Insets top="60" bottom="60" left="50" right="50"/></padding>
+
+            <Label text="🏨" styleClass="hotel-icon"/>
+            <Label text="Grand Stay" styleClass="brand-name"/>
+            <Label text="Hotel Reservation System" styleClass="brand-subtitle"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox spacing="12" styleClass="feature-list">
+                <Label text="✦  Browse available rooms" styleClass="feature-item"/>
+                <Label text="✦  Make &amp; manage reservations" styleClass="feature-item"/>
+                <Label text="✦  Fast checkout &amp; payment" styleClass="feature-item"/>
+                <Label text="✦  24/7 guest support" styleClass="feature-item"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- RIGHT PANEL — form -->
+    <center>
+        <VBox styleClass="right-panel" alignment="CENTER" spacing="0">
+            <padding><Insets top="60" bottom="60" left="60" right="60"/></padding>
+
+            <Label text="Welcome back" styleClass="form-title"/>
+            <Label text="Sign in to your account" styleClass="form-subtitle"/>
+
+            <Region prefHeight="32"/>
+
+            <!-- Error label (hidden by default) -->
+            <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"
+                   maxWidth="320" managed="false" visible="false"/>
+
+            <!-- Username -->
+            <VBox spacing="6">
+                <Label text="Username" styleClass="field-label"/>
+                <TextField fx:id="usernameField" promptText="Enter your username"
+                           styleClass="input-field" prefWidth="320" prefHeight="44"/>
+            </VBox>
+
+            <Region prefHeight="16"/>
+
+            <!-- Password -->
+            <VBox spacing="6">
+                <Label text="Password" styleClass="field-label"/>
+                <PasswordField fx:id="passwordField" promptText="Enter your password"
+                               styleClass="input-field" prefWidth="320" prefHeight="44"/>
+            </VBox>
+
+            <Region prefHeight="28"/>
+
+            <!-- Login button -->
+            <Button fx:id="loginBtn" text="Sign In"
+                    styleClass="primary-btn" prefWidth="320" prefHeight="48"
+                    onAction="#handleLogin" defaultButton="true"/>
+
+            <Region prefHeight="20"/>
+
+            <!-- Divider -->
+            <HBox alignment="CENTER" spacing="12">
+                <Region HBox.hgrow="ALWAYS" styleClass="divider-line"/>
+                <Label text="or" styleClass="divider-text"/>
+                <Region HBox.hgrow="ALWAYS" styleClass="divider-line"/>
+            </HBox>
+
+            <Region prefHeight="20"/>
+
+            <!-- Register link -->
+            <HBox alignment="CENTER" spacing="6">
+                <Label text="Don't have an account?" styleClass="link-text"/>
+                <Button text="Create one" styleClass="link-btn"
+                        onAction="#goToRegister"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>
