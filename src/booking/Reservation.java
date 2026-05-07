@@ -1,86 +1,75 @@
 package booking;
 import enums.ReservationStatus;
+import models.Amenity;
 import models.Guest;
 import models.Room;
-import models.Amenity;
-import java.util.List;
-import java.util.ArrayList;
 
+
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 
 public class Reservation {
-    private static int counter=1;
     private final int reservationID;
     private Guest guest;
     private Room room;
     private final LocalDate checkInDate;
     private final LocalDate checkOutDate;
     private ReservationStatus status;
-    private List<Amenity> selectedAmenities;
+    private ArrayList<Amenity> selectedAmenities = new ArrayList<>();
+
 
     //constructor:
-    public Reservation( Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate, List<Amenity> selectedAmenities)
-    {
-        this.reservationID = counter++  ;
-
+    public Reservation(int reservationID, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate) {
+        this.reservationID = reservationID;
         this.guest = guest;
         this.room = room;
-
-        if (checkOutDate.isBefore(checkInDate) || checkOutDate.equals(checkInDate)) {
-            throw new IllegalArgumentException("Invalid reservation dates");
-        }
-
-        this. checkInDate = checkInDate;
+        this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.status = ReservationStatus.PENDING;
-        this.selectedAmenities = new ArrayList<>(selectedAmenities);
-
 
 
     }
 
-    public long calculateDuration()
-    {
+    public long calculateDuration() {
 
-        return ChronoUnit.DAYS.between(checkInDate,checkOutDate);
-    }
-    public double calculateRoomCost() {
-        return calculateDuration() * room.getRoomType().getPricePerNight();
-    }
-
-    public double calculateAmenitiesCost() {
-        double amenitiesPerNight = 0;
-        for (Amenity amenity : selectedAmenities) {
-            amenitiesPerNight += amenity.getAdditionalCost();
-        }
-        return amenitiesPerNight * calculateDuration();
+        return ChronoUnit.DAYS.between(checkInDate, checkOutDate);
     }
 
     public double calculateTotalCost() {
-        return calculateRoomCost() + calculateAmenitiesCost();
-    }
+        double totalCost = calculateDuration() * room.getRoomType().getPricePerNight();
+        for (Amenity a : selectedAmenities) {
+            totalCost += a.getAdditionalCost();
+        }
+        return totalCost;
+    } // price per night is determined by room type
 
 
-    public boolean overlapsWith(LocalDate newStart , LocalDate newEnd)
-    {
+    public boolean overlapsWith(LocalDate newStart, LocalDate newEnd) {
         return newStart.isBefore(this.checkOutDate) && newEnd.isAfter(this.checkInDate);
     }
 
-//getters
+    @Override
+    public String toString() {
+        return "ID: " + getReservationID() + " | Guest: " + getGuest().getUsername() + " | Room: "
+                + getRoom().getRoomNumber() + " | Check in Date: " + this.checkInDate + " | Check out Date: "
+                + this.checkOutDate + " | Status: " + getStatus() + "| Amenities: "
+                + ((this.selectedAmenities == null) ? "None" : this.selectedAmenities);
+    }
+
+    //getters
     public int getReservationID() {
         return reservationID;
     }
 
-    public ReservationStatus getStatus()
-    {
+    public ReservationStatus getStatus() {
         return status;
     }
 
     //update reservation status
-    public void setStatus(ReservationStatus newStatus)
-    {
+    public void setStatus(ReservationStatus newStatus) {
         this.status = newStatus;
     }
 
@@ -91,8 +80,7 @@ public class Reservation {
     public Room getRoom() {
         return room;
     }
-    public void cancel()
-    {
+    public void cancel(){
         this.status = ReservationStatus.CANCELLED;
     }
 
@@ -103,8 +91,11 @@ public class Reservation {
     public LocalDate getCheckOutDate() {
         return checkOutDate;
     }
+    public ArrayList<Amenity> getSelectedAmenities() {
+        return selectedAmenities;
+    }
 
-    public List<Amenity> getSelectedAmenities() {
-        return new ArrayList<>(selectedAmenities);
+    public void addAmenity(Amenity amenity) {
+        selectedAmenities.add(amenity);
     }
 }
