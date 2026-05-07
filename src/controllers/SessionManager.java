@@ -1,25 +1,14 @@
 package controllers;
 
 import models.User;
+import models.Guest;
 
-/**
- * Holds the currently logged-in user so all controllers can access it.
- * Call SessionManager.setCurrentUser() after login,
- * and SessionManager.getCurrentUser() anywhere else.
- */
 public class SessionManager {
-
     private static User currentUser;
-
-    public static void setCurrentUser(User user) {
-        currentUser = user;
+    public static void setCurrentUser(User u) { currentUser = u; }
+    public static User getCurrentUser() { return currentUser; }
+    public static Guest getCurrentGuest() {
+        return (currentUser instanceof Guest) ? (Guest) currentUser : null;
     }
-
-    public static User getCurrentUser() {
-        return currentUser;
-    }
-
-    public static void logout() {
-        currentUser = null;
-    }
+    public static void logout() { currentUser = null; }
 }
