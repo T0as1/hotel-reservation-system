@@ -1,119 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.RegisterController"
-            prefWidth="880" prefHeight="660"
-            styleClass="root-pane">
-
-    <!-- LEFT PANEL -->
+            prefWidth="1080" prefHeight="720" styleClass="auth-root">
     <left>
-        <VBox styleClass="left-panel" prefWidth="340" alignment="CENTER" spacing="20">
-            <padding><Insets top="60" bottom="60" left="40" right="40"/></padding>
-
-            <Label text="🏨" styleClass="hotel-icon"/>
-            <Label text="Grand Stay" styleClass="brand-name"/>
-            <Label text="Create your account" styleClass="brand-subtitle"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <VBox spacing="10" styleClass="feature-list">
-                <Label text="✦  Must be 18 or older" styleClass="feature-item"/>
-                <Label text="✦  Password: 5+ chars, letter," styleClass="feature-item"/>
-                <Label text="      digit &amp; special character" styleClass="feature-item"/>
-                <Label text="✦  Username: letters &amp; digits only" styleClass="feature-item"/>
-                <Label text="✦  Starting balance: $2,000" styleClass="feature-item"/>
+        <VBox styleClass="left-panel" alignment="CENTER" spacing="18" prefWidth="420">
+            <padding><Insets top="50" bottom="50" left="46" right="46"/></padding>
+            <Label text="&#127770;" styleClass="hotel-icon"/>
+            <Label text="AURORA STAYS" styleClass="brand-name" wrapText="true" textAlignment="CENTER"/>
+            <Label text="JOIN THE  ✦  CLUB" styleClass="brand-sub"/>
+            <Region styleClass="brand-line" prefHeight="2" maxWidth="160"/>
+            <Region prefHeight="10"/>
+            <VBox spacing="12">
+                <Label text="WHAT YOU GET" styleClass="field-label"/>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="&#127881;" styleClass="feature-icon"/>
+                    <Label text="\$2,000 welcome credit" styleClass="feature-item"/>
+                </HBox>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="&#128274;" styleClass="feature-icon"/>
+                    <Label text="Secure account &amp; data" styleClass="feature-item"/>
+                </HBox>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="&#9203;" styleClass="feature-icon"/>
+                    <Label text="Book in seconds" styleClass="feature-item"/>
+                </HBox>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="&#127968;" styleClass="feature-icon"/>
+                    <Label text="Personalised stays" styleClass="feature-item"/>
+                </HBox>
             </VBox>
         </VBox>
     </left>
-
-    <!-- RIGHT PANEL -->
     <center>
-        <ScrollPane fitToWidth="true" styleClass="scroll-pane" hbarPolicy="NEVER">
-            <VBox styleClass="right-panel" alignment="CENTER_LEFT" spacing="0">
-                <padding><Insets top="40" bottom="40" left="60" right="60"/></padding>
-
-                <Label text="Create Account" styleClass="form-title"/>
-                <Label text="Fill in the details below to get started" styleClass="form-subtitle"/>
-
-                <Region prefHeight="24"/>
-
-                <!-- Error label -->
-                <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"
-                       maxWidth="360" managed="false" visible="false"/>
-
-                <!-- Success label -->
-                <Label fx:id="successLabel" styleClass="success-label" wrapText="true"
-                       maxWidth="360" managed="false" visible="false"/>
-
-                <!-- Username -->
-                <VBox spacing="5">
-                    <Label text="Username" styleClass="field-label"/>
-                    <TextField fx:id="usernameField" promptText="Letters and digits only"
-                               styleClass="input-field" prefWidth="360" prefHeight="42"/>
+        <StackPane fx:id="rootStack" styleClass="right-panel">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" hbarPolicy="NEVER">
+                <VBox fx:id="formBox" styleClass="right-panel" alignment="CENTER_LEFT" spacing="0" minWidth="540">
+                    <padding><Insets top="44" bottom="44" left="64" right="64"/></padding>
+                    <Label text="Create your account" styleClass="form-title"/>
+                    <Label text="A few details and you're in" styleClass="form-subtitle"/>
+                    <Region prefHeight="22"/>
+                    <Label fx:id="messageLabel" styleClass="error-label" wrapText="true" maxWidth="420" managed="false" visible="false"/>
+                    <Region fx:id="messageSpace" prefHeight="12" managed="false" visible="false"/>
+                    <HBox spacing="16">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="USERNAME" styleClass="field-label"/>
+                            <TextField fx:id="usernameField" promptText="Letters and digits only" styleClass="input-field" prefHeight="44"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="PASSWORD" styleClass="field-label"/>
+                            <PasswordField fx:id="passwordField" promptText="Min. 5 characters" styleClass="input-field" prefHeight="44"/>
+                        </VBox>
+                    </HBox>
+                    <Region prefHeight="14"/>
+                    <HBox spacing="16">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="DATE OF BIRTH" styleClass="field-label"/>
+                            <TextField fx:id="dobField" promptText="YYYY-MM-DD" styleClass="input-field" prefHeight="44"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="GENDER" styleClass="field-label"/>
+                            <ComboBox fx:id="genderBox" promptText="Select gender" styleClass="combo-field" prefHeight="44" maxWidth="1.7976931348623157E308"/>
+                        </VBox>
+                    </HBox>
+                    <Region prefHeight="14"/>
+                    <VBox spacing="6">
+                        <Label text="ADDRESS" styleClass="field-label"/>
+                        <TextField fx:id="addressField" promptText="Your full address" styleClass="input-field" prefHeight="44"/>
+                    </VBox>
+                    <Region prefHeight="14"/>
+                    <VBox spacing="6">
+                        <Label text="ROOM PREFERENCES (OPTIONAL)" styleClass="field-label"/>
+                        <TextField fx:id="preferencesField" promptText="e.g. High floor, ocean view, quiet room" styleClass="input-field" prefHeight="44"/>
+                    </VBox>
+                    <Region prefHeight="28"/>
+                    <Button fx:id="registerBtn" text="CREATE MY ACCOUNT" styleClass="primary-btn" prefHeight="52" maxWidth="1.7976931348623157E308" onAction="#handleRegister" defaultButton="true"/>
+                    <Region prefHeight="18"/>
+                    <HBox alignment="CENTER" spacing="6">
+                        <Label text="Already a member?" styleClass="link-text"/>
+                        <Button text="Sign in here" styleClass="link-btn" onAction="#goToLogin"/>
+                    </HBox>
                 </VBox>
-                <Region prefHeight="12"/>
-
-                <!-- Password -->
-                <VBox spacing="5">
-                    <Label text="Password" styleClass="field-label"/>
-                    <PasswordField fx:id="passwordField"
-                                  promptText="Min 5 chars, letter + digit + special"
-                                  styleClass="input-field" prefWidth="360" prefHeight="42"/>
-                </VBox>
-                <Region prefHeight="12"/>
-
-                <!-- Date of Birth -->
-                <VBox spacing="5">
-                    <Label text="Date of Birth" styleClass="field-label"/>
-                    <TextField fx:id="dobField" promptText="YYYY-MM-DD  (must be 18+)"
-                               styleClass="input-field" prefWidth="360" prefHeight="42"/>
-                </VBox>
-                <Region prefHeight="12"/>
-
-                <!-- Address -->
-                <VBox spacing="5">
-                    <Label text="Address" styleClass="field-label"/>
-                    <TextField fx:id="addressField" promptText="Your address"
-                               styleClass="input-field" prefWidth="360" prefHeight="42"/>
-                </VBox>
-                <Region prefHeight="12"/>
-
-                <!-- Gender -->
-                <VBox spacing="5">
-                    <Label text="Gender" styleClass="field-label"/>
-                    <ComboBox fx:id="genderBox" promptText="Select gender"
-                              styleClass="combo-field" prefWidth="360" prefHeight="42"/>
-                </VBox>
-                <Region prefHeight="12"/>
-
-                <!-- Room Preferences -->
-                <VBox spacing="5">
-                    <Label text="Room Preferences (optional)" styleClass="field-label"/>
-                    <TextField fx:id="preferencesField" promptText="e.g. High floor, quiet room"
-                               styleClass="input-field" prefWidth="360" prefHeight="42"/>
-                </VBox>
-
-                <Region prefHeight="24"/>
-
-                <!-- Register Button -->
-                <Button fx:id="registerBtn" text="Create Account"
-                        styleClass="primary-btn" prefWidth="360" prefHeight="48"
-                        onAction="#handleRegister" defaultButton="true"/>
-
-                <Region prefHeight="16"/>
-
-                <!-- Back to login -->
-                <HBox alignment="CENTER" spacing="6">
-                    <Label text="Already have an account?" styleClass="link-text"/>
-                    <Button text="Sign in" styleClass="link-btn" onAction="#goToLogin"/>
-                </HBox>
-
-            </VBox>
-        </ScrollPane>
+            </ScrollPane>
+        </StackPane>
     </center>
-
 </BorderPane>

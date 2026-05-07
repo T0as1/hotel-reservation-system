@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ChatWindowController"
+      prefWidth="440" prefHeight="600" styleClass="chat-root" spacing="0">
+
+    <!-- Header -->
+    <HBox styleClass="chat-header" alignment="CENTER_LEFT" spacing="14">
+        <Label text="&#128172;" style="-fx-font-size:22px;"/>
+        <VBox spacing="3">
+            <Label text="Live Chat — Reception" styleClass="chat-title"/>
+            <Label fx:id="statusLabel" text="Connecting..." styleClass="chat-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="connDot" text="&#9679;" style="-fx-text-fill:#F87171;-fx-font-size:11px;"/>
+    </HBox>
+
+    <!-- Messages -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" styleClass="scroll-pane"
+                VBox.vgrow="ALWAYS" hbarPolicy="NEVER">
+        <VBox fx:id="messagesBox" styleClass="chat-area" spacing="10"/>
+    </ScrollPane>
+
+    <!-- Input -->
+    <HBox styleClass="chat-input-bar" spacing="12" alignment="CENTER">
+        <TextField fx:id="messageInput" styleClass="chat-input" promptText="Type a message..."
+                   HBox.hgrow="ALWAYS" prefHeight="42" onAction="#sendMessage"/>
+        <Button text="Send" styleClass="chat-send-btn" onAction="#sendMessage" prefHeight="42"/>
+    </HBox>
+</VBox>

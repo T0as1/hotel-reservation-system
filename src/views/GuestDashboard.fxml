@@ -1,14 +1,219 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.GuestDashboardController"
+            prefWidth="1100" prefHeight="700">
+    <top>
+        <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="16">
+            <padding><Insets left="8" right="8"/></padding>
+            <Label text="&#127770; AURORA STAYS" styleClass="nav-brand"/>
+            <Label text="&#8226;" styleClass="nav-dot"/>
+            <Label text="GUEST PORTAL" styleClass="nav-section"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="navUsername" styleClass="nav-user"/>
+            <Button fx:id="navAvatar" styleClass="nav-avatar" text="G"/>
+            <Button text="&#128172;  Chat" styleClass="secondary-btn" onAction="#openChat" prefHeight="34"/>
+            <Button text="Sign Out" styleClass="nav-logout-btn" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    <left>
+        <VBox styleClass="sidebar">
+            <VBox styleClass="sidebar-brand" alignment="CENTER" spacing="4">
+                <Label text="&#127770;" style="-fx-font-size:30px;"/>
+                <Label text="AURORA" style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#00E5A8;"/>
+                <Label text="STAYS" style="-fx-font-size:9px;-fx-text-fill:#A78BFA;"/>
+            </VBox>
+            <Region styleClass="sidebar-divider" maxWidth="1.7976931348623157E308"/>
+            <Label text="NAVIGATION" styleClass="sidebar-section"/>
+            <Button fx:id="btnOverview"     text="&#128202;  Overview"        styleClass="sidebar-btn-active" onAction="#showOverview"/>
+            <Button fx:id="btnBrowse"       text="&#128716;  Browse Rooms"    styleClass="sidebar-btn" onAction="#showBrowse"/>
+            <Button fx:id="btnReservations" text="&#128203;  My Reservations" styleClass="sidebar-btn" onAction="#showReservations"/>
+            <Button fx:id="btnCheckout"     text="&#128179;  Checkout"        styleClass="sidebar-btn" onAction="#showCheckout"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Label text="ACCOUNT" styleClass="sidebar-section"/>
+            <Button fx:id="btnProfile" text="&#128100;  My Profile" styleClass="sidebar-btn" onAction="#showProfile"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea" styleClass="main-content">
 
-</AnchorPane>
+            <!-- OVERVIEW -->
+            <VBox fx:id="overviewPage" spacing="20" visible="true" managed="true">
+                <Label fx:id="welcomeLabel" styleClass="page-title"/>
+                <HBox fx:id="statCardsRow" spacing="16">
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128176;" styleClass="stat-icon"/>
+                        <Label fx:id="balanceLabel" text="\$0.00" styleClass="stat-value"/>
+                        <Label text="ACCOUNT BALANCE" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128203;" styleClass="stat-icon"/>
+                        <Label fx:id="activeResLabel" text="0" styleClass="stat-value"/>
+                        <Label text="ACTIVE RESERVATIONS" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128716;" styleClass="stat-icon"/>
+                        <Label fx:id="roomsLabel" text="0" styleClass="stat-value"/>
+                        <Label text="ROOMS AVAILABLE" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128179;" styleClass="stat-icon"/>
+                        <Label fx:id="totalSpentLabel" text="\$0.00" styleClass="stat-value"/>
+                        <Label text="TOTAL SPENT" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+                <VBox styleClass="content-card" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                        <Label text="Recent Reservations" styleClass="card-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="View All &#8594;" styleClass="link-btn" onAction="#showReservations"/>
+                    </HBox>
+                    <TableView fx:id="recentTable" styleClass="table-view" VBox.vgrow="ALWAYS" prefHeight="240">
+                        <columns>
+                            <TableColumn fx:id="colId"       text="ID"        prefWidth="60"/>
+                            <TableColumn fx:id="colRoom"     text="Room"      prefWidth="90"/>
+                            <TableColumn fx:id="colType"     text="Type"      prefWidth="100"/>
+                            <TableColumn fx:id="colCheckIn"  text="Check-In"  prefWidth="110"/>
+                            <TableColumn fx:id="colCheckOut" text="Check-Out" prefWidth="110"/>
+                            <TableColumn fx:id="colCost"     text="Total"     prefWidth="100"/>
+                            <TableColumn fx:id="colStatus"   text="Status"    prefWidth="120"/>
+                        </columns>
+                        <placeholder><Label text="No reservations yet. Browse rooms to begin your stay." style="-fx-text-fill:#6B7393;-fx-font-size:13px;"/></placeholder>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- BROWSE -->
+            <VBox fx:id="browsePage" spacing="0" visible="false" managed="false">
+                <HBox styleClass="filter-bar" alignment="CENTER_LEFT" spacing="16">
+                    <VBox HBox.hgrow="ALWAYS" spacing="2">
+                        <Label text="Browse Available Rooms" styleClass="page-title"/>
+                        <Label fx:id="refreshLabel" text="Live availability" styleClass="refresh-label"/>
+                    </VBox>
+                    <Label text="CHECK-IN" styleClass="filter-label"/>
+                    <DatePicker fx:id="checkInPicker" styleClass="input-field" prefHeight="38" prefWidth="145"/>
+                    <Label text="CHECK-OUT" styleClass="filter-label"/>
+                    <DatePicker fx:id="checkOutPicker" styleClass="input-field" prefHeight="38" prefWidth="145"/>
+                    <ComboBox fx:id="typeFilter" promptText="All Types" styleClass="combo-field" prefHeight="38" prefWidth="130"/>
+                    <Button text="&#128269;  Search" styleClass="primary-btn" prefHeight="38" onAction="#searchRooms"/>
+                </HBox>
+                <StackPane fx:id="browseStack" VBox.vgrow="ALWAYS">
+                    <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                        <FlowPane fx:id="roomsFlow" hgap="16" vgap="16" prefWrapLength="700">
+                            <padding><Insets top="20" bottom="20" left="20" right="20"/></padding>
+                        </FlowPane>
+                    </ScrollPane>
+                </StackPane>
+            </VBox>
+
+            <!-- RESERVATIONS -->
+            <VBox fx:id="reservationsPage" spacing="16" visible="false" managed="false">
+                <Label text="My Reservations" styleClass="page-title"/>
+                <VBox styleClass="content-card" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="card-header" alignment="CENTER_LEFT" spacing="10">
+                        <Label text="All Reservations" styleClass="card-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="Cancel Selected" styleClass="danger-btn" onAction="#cancelReservation" prefHeight="34"/>
+                    </HBox>
+                    <TableView fx:id="allResTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="rColId"       text="ID"        prefWidth="60"/>
+                            <TableColumn fx:id="rColRoom"     text="Room"      prefWidth="70"/>
+                            <TableColumn fx:id="rColType"     text="Type"      prefWidth="100"/>
+                            <TableColumn fx:id="rColCheckIn"  text="Check-In"  prefWidth="110"/>
+                            <TableColumn fx:id="rColCheckOut" text="Check-Out" prefWidth="110"/>
+                            <TableColumn fx:id="rColNights"   text="Nights"    prefWidth="70"/>
+                            <TableColumn fx:id="rColCost"     text="Total"     prefWidth="100"/>
+                            <TableColumn fx:id="rColStatus"   text="Status"    prefWidth="110"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- CHECKOUT -->
+            <VBox fx:id="checkoutPage" spacing="20" visible="false" managed="false">
+                <Label text="Checkout &amp; Payment" styleClass="page-title"/>
+                <HBox spacing="20" VBox.vgrow="ALWAYS">
+                    <VBox styleClass="content-card" HBox.hgrow="ALWAYS" spacing="0">
+                        <HBox styleClass="card-header"><Label text="Select Reservation to Check Out" styleClass="card-title"/></HBox>
+                        <VBox spacing="14" style="-fx-padding:18;">
+                            <ComboBox fx:id="checkoutResBox" promptText="Choose a reservation..." styleClass="combo-field" maxWidth="1.7976931348623157E308" prefHeight="44"/>
+                            <Label text="PAYMENT METHOD" styleClass="field-label"/>
+                            <HBox spacing="12">
+                                <VBox fx:id="cashOption"   styleClass="payment-option" onMouseClicked="#selectCash"   alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="&#128181;" styleClass="payment-icon"/>
+                                    <Label text="Cash" styleClass="payment-label"/>
+                                </VBox>
+                                <VBox fx:id="cardOption"   styleClass="payment-option" onMouseClicked="#selectCard"   alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="&#128179;" styleClass="payment-icon"/>
+                                    <Label text="Credit Card" styleClass="payment-label"/>
+                                </VBox>
+                                <VBox fx:id="onlineOption" styleClass="payment-option" onMouseClicked="#selectOnline" alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="&#128241;" styleClass="payment-icon"/>
+                                    <Label text="Online" styleClass="payment-label"/>
+                                </VBox>
+                            </HBox>
+                            <Label fx:id="checkoutMsg" managed="false" visible="false" wrapText="true"/>
+                            <Button text="CONFIRM PAYMENT" styleClass="primary-btn" prefHeight="50" maxWidth="1.7976931348623157E308" onAction="#processCheckout"/>
+                        </VBox>
+                    </VBox>
+                    <VBox styleClass="content-card" prefWidth="300" spacing="0">
+                        <HBox styleClass="card-header"><Label text="Invoice Summary" styleClass="card-title"/></HBox>
+                        <VBox spacing="0" style="-fx-padding:18;" VBox.vgrow="ALWAYS">
+                            <HBox styleClass="summary-row"><Label text="Room"       styleClass="summary-key" HBox.hgrow="ALWAYS"/><Label fx:id="invRoom"     styleClass="summary-val" text="&#8212;"/></HBox>
+                            <HBox styleClass="summary-row"><Label text="Check-In"   styleClass="summary-key" HBox.hgrow="ALWAYS"/><Label fx:id="invCheckIn"  styleClass="summary-val" text="&#8212;"/></HBox>
+                            <HBox styleClass="summary-row"><Label text="Check-Out"  styleClass="summary-key" HBox.hgrow="ALWAYS"/><Label fx:id="invCheckOut" styleClass="summary-val" text="&#8212;"/></HBox>
+                            <HBox styleClass="summary-row"><Label text="Nights"     styleClass="summary-key" HBox.hgrow="ALWAYS"/><Label fx:id="invNights"   styleClass="summary-val" text="&#8212;"/></HBox>
+                            <HBox styleClass="summary-row"><Label text="Rate/Night" styleClass="summary-key" HBox.hgrow="ALWAYS"/><Label fx:id="invRate"     styleClass="summary-val" text="&#8212;"/></HBox>
+                            <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                            <HBox alignment="CENTER_LEFT" style="-fx-padding:14 0 4 0;">
+                                <Label text="TOTAL DUE" styleClass="summary-total-key" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="invTotal" text="\$0.00" styleClass="summary-total-val"/>
+                            </HBox>
+                            <Label text="Balance after payment:" style="-fx-text-fill:#6B7393;-fx-font-size:11px;"/>
+                            <Label fx:id="invAfterBalance" text="&#8212;" style="-fx-font-weight:bold;-fx-text-fill:#34E0A1;-fx-font-size:14px;"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- PROFILE -->
+            <VBox fx:id="profilePage" spacing="20" visible="false" managed="false" maxWidth="640">
+                <Label text="My Profile" styleClass="page-title"/>
+                <VBox styleClass="form-card" spacing="16">
+                    <Label text="ACCOUNT DETAILS" styleClass="field-label"/>
+                    <HBox spacing="40">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="USERNAME" styleClass="field-label"/>
+                            <Label fx:id="profUsername" style="-fx-font-size:16px;-fx-font-weight:bold;-fx-text-fill:#E6E9F5;"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="BALANCE" styleClass="field-label"/>
+                            <Label fx:id="profBalance" style="-fx-font-size:16px;-fx-font-weight:bold;-fx-text-fill:#00E5A8;"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="40">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="DATE OF BIRTH" styleClass="field-label"/>
+                            <Label fx:id="profDob" style="-fx-font-size:14px;-fx-text-fill:#9AA3BE;"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="GENDER" styleClass="field-label"/>
+                            <Label fx:id="profGender" style="-fx-font-size:14px;-fx-text-fill:#9AA3BE;"/>
+                        </VBox>
+                    </HBox>
+                    <VBox spacing="5">
+                        <Label text="ADDRESS" styleClass="field-label"/>
+                        <Label fx:id="profAddress" style="-fx-text-fill:#9AA3BE;" wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="5">
+                        <Label text="ROOM PREFERENCES" styleClass="field-label"/>
+                        <Label fx:id="profPrefs" style="-fx-text-fill:#9AA3BE;" wrapText="true"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+
+        </StackPane>
+    </center>
+</BorderPane>

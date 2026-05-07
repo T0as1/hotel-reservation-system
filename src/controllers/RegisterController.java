@@ -6,6 +6,8 @@ import exceptions.DobException;
 import exceptions.InvalidPasswordException;
 import exceptions.InvalidUsernameException;
 import models.Guest;
+import utils.AnimationUtils;
+import utils.ToastManager;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -14,156 +16,158 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
+import javafx.scene.layout.Region;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 public class RegisterController implements Initializable {
 
-    @FXML private TextField     usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private TextField     dobField;
-    @FXML private TextField     addressField;
+    @FXML private TextField        usernameField;
+    @FXML private PasswordField    passwordField;
+    @FXML private TextField        dobField;
+    @FXML private TextField        addressField;
     @FXML private ComboBox<String> genderBox;
-    @FXML private TextField     preferencesField;
-    @FXML private Label         errorLabel;
-    @FXML private Label         successLabel;
+    @FXML private TextField        preferencesField;
+    @FXML private Label            messageLabel;
+    @FXML private Region           messageSpace;
+    @FXML private VBox             formBox;
+    @FXML private Button           registerBtn;
+    @FXML private StackPane        rootStack;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        AnimationUtils.fadeIn(formBox);
         genderBox.setItems(FXCollections.observableArrayList("MALE", "FEMALE"));
-        usernameField.textProperty().addListener((o, old, now) -> hideMessages());
-        passwordField.textProperty().addListener((o, old, now) -> hideMessages());
-        dobField.textProperty().addListener((o, old, now)      -> hideMessages());
+        usernameField.textProperty().addListener((o, v, n) -> hideMsg());
+        passwordField.textProperty().addListener((o, v, n) -> hideMsg());
     }
 
     @FXML
     private void handleRegister() {
-        hideMessages();
+        AnimationUtils.buttonPress(registerBtn);
+        hideMsg();
 
-        String username   = usernameField.getText().trim();
-        String password   = passwordField.getText();
-        String dobText    = dobField.getText().trim();
-        String address    = addressField.getText().trim();
-        String genderText = genderBox.getValue();
-        String prefs      = preferencesField.getText().trim();
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+        String dobText  = dobField.getText().trim();
+        String address  = addressField.getText().trim();
+        String gText    = genderBox.getValue();
+        String prefs    = preferencesField.getText().trim();
 
-        // Empty checks
-        if (username.isEmpty()) { showError("Username cannot be empty."); return; }
-        if (password.isEmpty()) { showError("Password cannot be empty."); return; }
-        if (dobText.isEmpty())  { showError("Date of birth is required."); return; }
-        if (address.isEmpty())  { showError("Address cannot be empty."); return; }
-        if (genderText == null) { showError("Please select a gender."); return; }
+        if (username.isEmpty()) { shake(usernameField); showMsg("Username cannot be empty.", false); return; }
+        if (password.isEmpty()) { shake(passwordField); showMsg("Password cannot be empty.", false); return; }
+        if (dobText.isEmpty())  { shake(dobField);      showMsg("Date of birth is required.", false); return; }
+        if (address.isEmpty())  { shake(addressField);  showMsg("Address cannot be empty.", false); return; }
+        if (gText == null)      { shake(genderBox);     showMsg("Please select a gender.", false); return; }
 
-        // Username taken check
         if (HotelDatabase.findGuestByUsername(username) != null) {
-            showError("Username \"" + username + "\" is already taken.");
+            shake(usernameField);
+            showMsg("Username \u201c" + username + "\u201d is already taken.", false);
             return;
         }
 
-        // Parse date
         LocalDate dob;
-        try {
-            dob = LocalDate.parse(dobText);
-        } catch (DateTimeParseException e) {
-            showError("Invalid date. Use YYYY-MM-DD format (e.g. 2000-05-15).");
+        try { dob = LocalDate.parse(dobText); }
+        catch (DateTimeParseException e) {
+            shake(dobField);
+            showMsg("Use YYYY-MM-DD format (e.g. 2000-05-15).", false);
             return;
         }
 
-        // Parse gender
         Gender gender;
-        try {
-            gender = Gender.valueOf(genderText.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            showError("Invalid gender selection.");
-            return;
-        }
+        try { gender = Gender.valueOf(gText.toUpperCase()); }
+        catch (IllegalArgumentException e) { showMsg("Invalid gender.", false); return; }
 
-        // Create guest with validation
-        Guest newGuest = new Guest();
+        Guest g = new Guest();
+        try { g.setUsername(username); } catch (InvalidUsernameException e) { shake(usernameField); showMsg(e.getMessage(), false); return; }
+        try { g.setPassword(password); } catch (InvalidPasswordException e) { shake(passwordField); showMsg(e.getMessage(), false); return; }
+        try { g.setDateOfBirth(dob);   } catch (DobException e)             { shake(dobField);      showMsg(e.getMessage(), false); return; }
 
-        try {
-            newGuest.setUsername(username);
-        } catch (InvalidUsernameException e) {
-            showError("Username error: " + e.getMessage()); return;
-        }
+        g.setAddress(address);
+        g.setGender(gender);
+        g.setRoomPreferences(prefs.isEmpty() ? null : prefs);
+        g.setBalance(2000.0);
 
-        try {
-            newGuest.setPassword(password);
-        } catch (InvalidPasswordException e) {
-            showError("Password error: " + e.getMessage()); return;
-        }
+        HotelDatabase.addGuest(g);
+        SessionManager.setCurrentUser(g);
 
-        try {
-            newGuest.setDateOfBirth(dob);
-        } catch (DobException e) {
-            showError("Date of birth error: " + e.getMessage()); return;
-        }
-
-        newGuest.setAddress(address);
-        newGuest.setGender(gender);
-        newGuest.setRoomPreferences(prefs.isEmpty() ? null : prefs);
-        newGuest.setBalance(2000.0);
-
-        HotelDatabase.addGuest(newGuest);
-
-        showSuccess("Account created! Welcome, " + username + ". You can now sign in.");
-        clearForm();
+        showLoading("Creating your account\u2026");
+        PauseTransition pt = new PauseTransition(Duration.millis(160));
+        pt.setOnFinished(ev -> {
+            try {
+                Stage s = (Stage) usernameField.getScene().getWindow();
+                if (!s.isMaximized() && !s.isFullScreen()) {
+                    if (s.getWidth()  < 1150) s.setWidth(1150);
+                    if (s.getHeight() < 760)  s.setHeight(760);
+                }
+                NavigationManager.navigateTo(s,
+                        "views/GuestDashboard.fxml",
+                        "Aurora Stays \u2014 Guest Portal");
+                ToastManager.success(s, "Welcome, " + username + "! Your account is ready.");
+            } catch (Exception e) {
+                dismissLoading();
+                Throwable cause = e.getCause() != null ? e.getCause() : e;
+                showMsg("Navigation failed: " + cause.getMessage(), false);
+            }
+        });
+        pt.play();
     }
 
-    @FXML
-    private void goToLogin() {
-        try {
-            switchScene("views/Login.fxml", "Login");
-        } catch (Exception e) {
-            showError("Error: " + e.getMessage());
-        }
+    @FXML private void goToLogin() {
+        showLoading("Going to sign in\u2026");
+        PauseTransition pt = new PauseTransition(Duration.millis(140));
+        pt.setOnFinished(ev -> {
+            try {
+                Stage s = (Stage) usernameField.getScene().getWindow();
+                NavigationManager.navigateTo(s,
+                        "views/Login.fxml",
+                        "Aurora Stays \u2014 Sign In");
+            } catch (Exception e) {
+                dismissLoading();
+                showMsg("Navigation failed: " + e.getMessage(), false);
+            }
+        });
+        pt.play();
     }
 
-    private void switchScene(String fxmlPath, String title) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlPath));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                getClass().getResource("/views/hotel.css").toExternalForm());
-        Stage stage = (Stage) usernameField.getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene(scene);
-        stage.show();
+    private void showLoading(String msg) {
+        if (rootStack == null) return;
+        dismissLoading();
+        StackPane overlay = AnimationUtils.createLoadingOverlay(msg);
+        overlay.setId("loadingOverlay");
+        rootStack.getChildren().add(overlay);
     }
 
-    private void showError(String msg) {
-        errorLabel.setText("⚠  " + msg);
-        errorLabel.setVisible(true);
-        errorLabel.setManaged(true);
-        successLabel.setVisible(false);
-        successLabel.setManaged(false);
+    private void dismissLoading() {
+        if (rootStack != null)
+            rootStack.getChildren().removeIf(n -> "loadingOverlay".equals(n.getId()));
     }
 
-    private void showSuccess(String msg) {
-        successLabel.setText("✓  " + msg);
-        successLabel.setVisible(true);
-        successLabel.setManaged(true);
-        errorLabel.setVisible(false);
-        errorLabel.setManaged(false);
+    private void shake(javafx.scene.Node node) {
+        AnimationUtils.shake(node);
+        AnimationUtils.flashError(node);
     }
 
-    private void hideMessages() {
-        errorLabel.setVisible(false);
-        errorLabel.setManaged(false);
-        successLabel.setVisible(false);
-        successLabel.setManaged(false);
+    private void showMsg(String msg, boolean ok) {
+        messageLabel.setText((ok ? "\u2713   " : "\u26a0   ") + msg);
+        messageLabel.getStyleClass().removeAll("error-label", "success-label");
+        messageLabel.getStyleClass().add(ok ? "success-label" : "error-label");
+        messageLabel.setVisible(true);
+        messageLabel.setManaged(true);
+        if (messageSpace != null) { messageSpace.setVisible(true); messageSpace.setManaged(true); }
+        AnimationUtils.slideUp(messageLabel);
     }
 
-    private void clearForm() {
-        usernameField.clear();
-        passwordField.clear();
-        dobField.clear();
-        addressField.clear();
-        genderBox.setValue(null);
-        preferencesField.clear();
+    private void hideMsg() {
+        messageLabel.setVisible(false);
+        messageLabel.setManaged(false);
+        if (messageSpace != null) { messageSpace.setVisible(false); messageSpace.setManaged(false); }
     }
 }

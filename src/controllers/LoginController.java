@@ -5,14 +5,17 @@ import models.Admin;
 import models.Guest;
 import models.Receptionist;
 import models.User;
+import utils.AnimationUtils;
 
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,103 +24,121 @@ public class LoginController implements Initializable {
 
     @FXML private TextField     usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private Label         errorLabel;
+    @FXML private Label         messageLabel;
+    @FXML private Region        messageSpace;
+    @FXML private VBox          formBox;
+    @FXML private Button        loginBtn;
+    @FXML private StackPane     rootStack;
+    @FXML private Label         logoLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        usernameField.textProperty().addListener((obs, old, now) -> hideMessages());
-        passwordField.textProperty().addListener((obs, old, now) -> hideMessages());
+        AnimationUtils.fadeIn(formBox);
+        if (logoLabel != null) AnimationUtils.createGlowPulse(logoLabel);
+        usernameField.textProperty().addListener((o, v, n) -> hideMsg());
+        passwordField.textProperty().addListener((o, v, n) -> hideMsg());
+        usernameField.setOnAction(e -> passwordField.requestFocus());
     }
 
     @FXML
     private void handleLogin() {
-        String username = usernameField.getText().trim();
-        String password = passwordField.getText();
+        AnimationUtils.buttonPress(loginBtn);
+        hideMsg();
 
-        if (username.isEmpty() || password.isEmpty()) {
-            showError("Please enter both username and password.");
-            return;
-        }
+        String u = usernameField.getText().trim();
+        String p = passwordField.getText();
 
-        User user = HotelDatabase.findUser(username, password);
+        if (u.isEmpty()) { fail(usernameField, "Username cannot be empty."); return; }
+        if (p.isEmpty()) { fail(passwordField, "Password cannot be empty."); return; }
 
+        User user = HotelDatabase.findUser(u, p);
         if (user == null) {
-            showError("Incorrect username or password. Please try again.");
+            AnimationUtils.shake(formBox);
+            AnimationUtils.flashError(usernameField);
+            AnimationUtils.flashError(passwordField);
+            showMsg("Invalid credentials. Please try again.", false);
+            passwordField.clear();
+            passwordField.requestFocus();
             return;
         }
 
-        try {
-            SessionManager.setCurrentUser(user);
+        SessionManager.setCurrentUser(user);
+        showLoading("Welcome to Aurora Stays\u2026");
 
-            if (user instanceof Admin) {
-                switchScene("views/AdminDashboard.fxml", "Admin Dashboard");
-            } else if (user instanceof Receptionist) {
-                switchScene("views/ReceptionistDashboard.fxml", "Receptionist Dashboard");
-            } else if (user instanceof Guest) {
-                switchScene("views/GuestDashboard.fxml", "Guest Dashboard");
+        PauseTransition pt = new PauseTransition(Duration.millis(220));
+        pt.setOnFinished(ev -> {
+            try {
+                if (user instanceof Admin)
+                    nav("views/AdminDashboard.fxml",        "Aurora Stays \u2014 Management",  1180, 760);
+                else if (user instanceof Receptionist)
+                    nav("views/ReceptionistDashboard.fxml", "Aurora Stays \u2014 Reception",   1180, 760);
+                else if (user instanceof Guest)
+                    nav("views/GuestDashboard.fxml",        "Aurora Stays \u2014 Guest Portal", 1180, 760);
+            } catch (Exception e) {
+                dismissLoading();
+                Throwable cause = e.getCause() != null ? e.getCause() : e;
+                showMsg("Navigation failed: " + cause.getMessage(), false);
             }
+        });
+        pt.play();
+    }
 
-        } catch (Exception e) {
-            // Dashboard not built yet — show green success message
-            showSuccess("Welcome back, " + user.getUsername() + "! Dashboard coming soon.");
+    @FXML private void goToRegister() {
+        showLoading("Opening registration\u2026");
+        PauseTransition pt = new PauseTransition(Duration.millis(160));
+        pt.setOnFinished(ev -> {
+            try { nav("views/Register.fxml", "Aurora Stays \u2014 Create Account", 1080, 720); }
+            catch (Exception e) {
+                dismissLoading();
+                showMsg("Navigation failed: " + e.getMessage(), false);
+            }
+        });
+        pt.play();
+    }
+
+    private void fail(javafx.scene.Node node, String msg) {
+        AnimationUtils.shake(node);
+        AnimationUtils.flashError(node);
+        showMsg(msg, false);
+    }
+
+    private void nav(String fxml, String title, double w, double h) throws Exception {
+        Stage s = (Stage) usernameField.getScene().getWindow();
+        if (!s.isMaximized() && !s.isFullScreen()) {
+            if (s.getWidth()  < w) s.setWidth(w);
+            if (s.getHeight() < h) s.setHeight(h);
         }
+        NavigationManager.navigateTo(s, fxml, title);
     }
 
-    @FXML
-    private void goToRegister() {
-        try {
-            switchScene("views/Register.fxml", "Register");
-        } catch (Exception e) {
-            showError("Navigation error: " + e.getMessage());
-        }
+    private void showLoading(String msg) {
+        if (rootStack == null) return;
+        dismissLoading();
+        StackPane overlay = AnimationUtils.createLoadingOverlay(msg);
+        overlay.setId("loadingOverlay");
+        rootStack.getChildren().add(overlay);
     }
 
-    private void switchScene(String fxmlPath, String title) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxmlPath));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(
-                getClass().getResource("/views/hotel.css").toExternalForm());
-        Stage stage = (Stage) usernameField.getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene(scene);
-        stage.show();
+    private void dismissLoading() {
+        if (rootStack != null)
+            rootStack.getChildren().removeIf(n -> "loadingOverlay".equals(n.getId()));
     }
 
-    private void showError(String message) {
-        errorLabel.setText("⚠  " + message);
-        errorLabel.setStyle(
-                "-fx-background-color: #fff0f0;" +
-                        "-fx-text-fill: #c0392b;" +
-                        "-fx-font-size: 12px;" +
-                        "-fx-padding: 10 14 10 14;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-border-color: #f5c6c6;" +
-                        "-fx-border-radius: 8px;" +
-                        "-fx-border-width: 1px;"
-        );
-        errorLabel.setVisible(true);
-        errorLabel.setManaged(true);
+    private void showMsg(String msg, boolean ok) {
+        messageLabel.setText((ok ? "\u2713   " : "\u26a0   ") + msg);
+        messageLabel.getStyleClass().removeAll("error-label", "success-label");
+        messageLabel.getStyleClass().add(ok ? "success-label" : "error-label");
+        messageLabel.setVisible(true);
+        messageLabel.setManaged(true);
+        if (messageSpace != null) { messageSpace.setVisible(true); messageSpace.setManaged(true); }
+        AnimationUtils.slideUp(messageLabel);
     }
 
-    private void showSuccess(String message) {
-        errorLabel.setText("✓  " + message);
-        errorLabel.setStyle(
-                "-fx-background-color: #f0fff4;" +
-                        "-fx-text-fill: #1e7e34;" +
-                        "-fx-font-size: 12px;" +
-                        "-fx-padding: 10 14 10 14;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-border-color: #b8e6c4;" +
-                        "-fx-border-radius: 8px;" +
-                        "-fx-border-width: 1px;"
-        );
-        errorLabel.setVisible(true);
-        errorLabel.setManaged(true);
-    }
+    public void showSuccess(String msg) { showMsg(msg, true); }
 
-    private void hideMessages() {
-        errorLabel.setVisible(false);
-        errorLabel.setManaged(false);
+    private void hideMsg() {
+        messageLabel.setVisible(false);
+        messageLabel.setManaged(false);
+        if (messageSpace != null) { messageSpace.setVisible(false); messageSpace.setManaged(false); }
     }
 }
