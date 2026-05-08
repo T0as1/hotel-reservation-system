@@ -4,14 +4,13 @@ import models.Amenity;
 import models.Guest;
 import models.Room;
 
-
-import java.lang.reflect.Array;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 
-public class Reservation {
+public class Reservation implements Serializable {
     private final int reservationID;
     private Guest guest;
     private Room room;

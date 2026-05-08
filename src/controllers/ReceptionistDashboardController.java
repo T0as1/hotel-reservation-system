@@ -17,9 +17,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.animation.PauseTransition;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -48,6 +50,7 @@ public class ReceptionistDashboardController implements Initializable {
     @FXML private TextField replyField;
     @FXML private ScrollPane chatScroll;
     @FXML private Label chatStatus;
+    @FXML private StackPane contentArea;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("MMM dd, yyyy");
     private ChatServer server;
@@ -58,7 +61,22 @@ public class ReceptionistDashboardController implements Initializable {
         setupTables();
         refreshOverview();
         startChatServer();
+        startSyncTimer();
         AnimationUtils.fadeIn(overviewPage);
+    }
+
+    private void startSyncTimer() {
+        javafx.animation.Timeline timer = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(javafx.util.Duration.millis(2000), e -> {
+                    if (HotelDatabase.checkForUpdates()) {
+                        setupTables();
+                        refreshOverview();
+                        refreshCheckInBox();
+                        refreshCheckOutBox();
+                    }
+                }));
+        timer.setCycleCount(javafx.animation.Timeline.INDEFINITE);
+        timer.play();
     }
 
     private void refreshOverview() {
@@ -99,10 +117,13 @@ public class ReceptionistDashboardController implements Initializable {
         Stage s = (Stage) navUsername.getScene().getWindow();
         String sel = checkInBox.getValue();
         if (sel == null) { showMsg(checkInMsg, "Select a reservation.", false); return; }
-        int id = Integer.parseInt(sel.split("#")[1].split(" ")[0]);
+        int id;
+        try { id = Integer.parseInt(sel.split("#")[1].split(" ")[0]); }
+        catch (Exception e) { showMsg(checkInMsg, "Invalid selection.", false); return; }
         Reservation res = HotelDatabase.findReservationById(id);
         if (res == null) { showMsg(checkInMsg, "Reservation not found.", false); return; }
         res.setStatus(ReservationStatus.CHECKED_IN); res.getRoom().book();
+        HotelDatabase.saveToFile();
         refreshOverview(); refreshCheckInBox();
         showMsg(checkInMsg, res.getGuest().getUsername() + " checked in to Room " + res.getRoom().getRoomNumber(), true);
         ToastManager.success(s, res.getGuest().getUsername() + " checked in \u2713");
@@ -110,8 +131,11 @@ public class ReceptionistDashboardController implements Initializable {
 
     private void refreshCheckOutBox() {
         List<String> items = HotelDatabase.getAllReservations().stream()
-                .filter(r -> r.getStatus() == ReservationStatus.CHECKED_IN)
-                .map(r -> "#" + r.getReservationID() + " \u2014 " + r.getGuest().getUsername() + " \u2014 Room " + r.getRoom().getRoomNumber())
+                .filter(r -> r.getStatus() == ReservationStatus.CHECKED_IN
+                          || r.getStatus() == ReservationStatus.COMPLETED)
+                .map(r -> "#" + r.getReservationID() + " \u2014 " + r.getGuest().getUsername()
+                        + " \u2014 Room " + r.getRoom().getRoomNumber()
+                        + (r.getStatus() == ReservationStatus.COMPLETED ? " (paid)" : ""))
                 .collect(Collectors.toList());
         checkOutBox.setItems(FXCollections.observableArrayList(items));
     }
@@ -120,13 +144,23 @@ public class ReceptionistDashboardController implements Initializable {
         Stage s = (Stage) navUsername.getScene().getWindow();
         String sel = checkOutBox.getValue();
         if (sel == null) { showMsg(checkOutMsg, "Select a reservation.", false); return; }
-        int id = Integer.parseInt(sel.split("#")[1].split(" ")[0]);
+        int id;
+        try { id = Integer.parseInt(sel.split("#")[1].split(" ")[0]); }
+        catch (Exception e) { showMsg(checkOutMsg, "Invalid selection.", false); return; }
         Reservation res = HotelDatabase.findReservationById(id);
         if (res == null) { showMsg(checkOutMsg, "Reservation not found.", false); return; }
-        res.setStatus(ReservationStatus.CHECKED_OUT); res.getRoom().release();
+        if (res.getStatus() == ReservationStatus.COMPLETED) {
+            res.setStatus(ReservationStatus.CHECKED_OUT);
+            showMsg(checkOutMsg, res.getGuest().getUsername() + " checkout confirmed from Room " + res.getRoom().getRoomNumber(), true);
+            ToastManager.success(s, res.getGuest().getUsername() + " checkout confirmed.");
+        } else {
+            res.setStatus(ReservationStatus.CHECKED_OUT);
+            res.getRoom().release();
+            showMsg(checkOutMsg, res.getGuest().getUsername() + " checked out from Room " + res.getRoom().getRoomNumber(), true);
+            ToastManager.info(s, res.getGuest().getUsername() + " checked out.");
+        }
+        HotelDatabase.saveToFile();
         refreshOverview(); refreshCheckOutBox();
-        showMsg(checkOutMsg, res.getGuest().getUsername() + " checked out from Room " + res.getRoom().getRoomNumber(), true);
-        ToastManager.info(s, res.getGuest().getUsername() + " checked out.");
     }
 
     private void startChatServer() {
@@ -182,20 +216,25 @@ public class ReceptionistDashboardController implements Initializable {
 
     private void showMsg(Label lbl, String msg, boolean ok) {
         lbl.setText((ok ? "\u2713  " : "\u26a0  ") + msg);
-        lbl.setStyle(ok
-                ? "-fx-background-color:rgba(20,80,40,0.25);-fx-text-fill:#86EFAC;-fx-padding:10 14;-fx-background-radius:8;-fx-border-color:rgba(34,197,94,0.3);-fx-border-width:1;-fx-border-radius:8;"
-                : "-fx-background-color:rgba(120,20,20,0.25);-fx-text-fill:#FCA5A5;-fx-padding:10 14;-fx-background-radius:8;-fx-border-color:rgba(239,68,68,0.3);-fx-border-width:1;-fx-border-radius:8;");
+        lbl.getStyleClass().removeAll("error-label", "success-label");
+        lbl.getStyleClass().add(ok ? "success-label" : "error-label");
         lbl.setVisible(true); lbl.setManaged(true);
         AnimationUtils.slideUp(lbl);
         if (!ok) AnimationUtils.shake(lbl);
     }
 
     @FXML private void handleLogout() {
-        if (server != null) server.stop();
-        SessionManager.logout();
-        try {
-            Stage st = (Stage) navUsername.getScene().getWindow();
-            NavigationManager.navigateTo(st, "views/Login.fxml", "Aurora Stays — Sign In");
-        } catch (Exception e) { e.printStackTrace(); }
+        StackPane overlay = AnimationUtils.createLoadingOverlay("Signing out\u2026");
+        contentArea.getChildren().add(overlay);
+        PauseTransition pt = new PauseTransition(Duration.millis(600));
+        pt.setOnFinished(ev -> {
+            if (server != null) server.stop();
+            SessionManager.logout();
+            try {
+                Stage st = (Stage) navUsername.getScene().getWindow();
+                NavigationManager.navigateTo(st, "views/Login.fxml", "Vespera — Sign In");
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+        pt.play();
     }
 }

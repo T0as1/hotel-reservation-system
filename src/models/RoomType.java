@@ -1,7 +1,8 @@
 package models;
 
+import java.io.Serializable;
 
-public class RoomType {
+public class RoomType implements Serializable {
     private String name;
     private double pricePerNight;
     private String description;

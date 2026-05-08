@@ -9,7 +9,7 @@
     <top>
         <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="16">
             <padding><Insets left="8" right="8"/></padding>
-            <Label text="&#127770; AURORA STAYS" styleClass="nav-brand"/>
+            <Label text="&#127770; VESPERA" styleClass="nav-brand"/>
             <Label text="&#8226;" styleClass="nav-dot"/>
             <Label text="ADMIN PANEL" styleClass="nav-section"/>
             <Region HBox.hgrow="ALWAYS"/>
@@ -21,7 +21,7 @@
         <VBox styleClass="sidebar">
             <VBox styleClass="sidebar-brand" alignment="CENTER" spacing="4">
                 <Label text="&#127770;" style="-fx-font-size:30px;"/>
-                <Label text="AURORA" style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#00E5A8;"/>
+                <Label text="VESPERA" style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#FFB86B;"/>
                 <Label text="STAYS" style="-fx-font-size:9px;-fx-text-fill:#A78BFA;"/>
             </VBox>
             <Region styleClass="sidebar-divider" maxWidth="1.7976931348623157E308"/>
@@ -58,7 +58,7 @@
                     </VBox>
                     <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                         <Label text="&#128176;" styleClass="stat-icon"/>
-                        <Label fx:id="totalRevenue" text="$0" styleClass="stat-value"/>
+                        <Label fx:id="totalRevenue" text="\$0" styleClass="stat-value"/>
                         <Label text="TOTAL REVENUE" styleClass="stat-label"/>
                     </VBox>
                 </HBox>
@@ -106,13 +106,26 @@
                         <HBox styleClass="card-header"><Label text="All Rooms" styleClass="card-title"/></HBox>
                         <TableView fx:id="roomsTable" styleClass="table-view" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="rNum"   text="Number"      prefWidth="90"/>
-                                <TableColumn fx:id="rFloor" text="Floor"       prefWidth="70"/>
-                                <TableColumn fx:id="rType"  text="Type"        prefWidth="110"/>
-                                <TableColumn fx:id="rPrice" text="Price/Night" prefWidth="110"/>
-                                <TableColumn fx:id="rAvail" text="Available"   prefWidth="100"/>
+                                <TableColumn fx:id="rNum"   text="Number"      prefWidth="80"/>
+                                <TableColumn fx:id="rFloor" text="Floor"       prefWidth="60"/>
+                                <TableColumn fx:id="rType"  text="Type"        prefWidth="100"/>
+                                <TableColumn fx:id="rAmen"  text="Amenities"   prefWidth="90"/>
+                                <TableColumn fx:id="rPrice" text="Price/Night" prefWidth="100"/>
+                                <TableColumn fx:id="rAvail" text="Available"   prefWidth="90"/>
                             </columns>
                         </TableView>
+                    </VBox>
+                    <VBox styleClass="content-card" prefWidth="240" spacing="10">
+                        <HBox styleClass="card-header"><Label text="Room Amenities" styleClass="card-title"/></HBox>
+                        <Label fx:id="amenRoomLabel" text="Select a room" style="-fx-text-fill:#9AA3BE;-fx-font-size:12px;-fx-padding:0 0 4 0;"/>
+                        <Label text="Current:" styleClass="field-label"/>
+                        <ListView fx:id="roomAmenList" prefHeight="140" style="-fx-background-color:#0E1530;-fx-control-inner-background:#0E1530;-fx-background-radius:8px;-fx-border-color:#1E293B;-fx-border-radius:8px;"/>
+                        <Label text="Add Amenity:" styleClass="field-label"/>
+                        <ComboBox fx:id="addAmenCombo" styleClass="combo-field" prefHeight="36" maxWidth="1.7976931348623157E308"/>
+                        <HBox spacing="8">
+                            <Button text="Add" styleClass="primary-btn" onAction="#handleAddRoomAmenity" prefHeight="36" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/>
+                            <Button text="Remove" styleClass="danger-btn" onAction="#handleRemoveRoomAmenity" prefHeight="36" prefWidth="80"/>
+                        </HBox>
                     </VBox>
                 </HBox>
             </VBox>

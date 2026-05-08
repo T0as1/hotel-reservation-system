@@ -31,12 +31,16 @@ public class LoginController implements Initializable {
     @FXML private StackPane     rootStack;
     @FXML private Label         logoLabel;
 
+    //flag to keep error visible when clearing password field
+    private boolean suppressHide = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //fade in form and hide error when user types
         AnimationUtils.fadeIn(formBox);
         if (logoLabel != null) AnimationUtils.createGlowPulse(logoLabel);
-        usernameField.textProperty().addListener((o, v, n) -> hideMsg());
-        passwordField.textProperty().addListener((o, v, n) -> hideMsg());
+        usernameField.textProperty().addListener((o, v, n) -> { if (!suppressHide) hideMsg(); });
+        passwordField.textProperty().addListener((o, v, n) -> { if (!suppressHide) hideMsg(); });
         usernameField.setOnAction(e -> passwordField.requestFocus());
     }
 
@@ -53,27 +57,30 @@ public class LoginController implements Initializable {
 
         User user = HotelDatabase.findUser(u, p);
         if (user == null) {
+            suppressHide = true;
+            passwordField.clear();
+            suppressHide = false;
+
             AnimationUtils.shake(formBox);
             AnimationUtils.flashError(usernameField);
             AnimationUtils.flashError(passwordField);
-            showMsg("Invalid credentials. Please try again.", false);
-            passwordField.clear();
+            showMsg("Incorrect username or password. Please try again.", false);
             passwordField.requestFocus();
             return;
         }
 
         SessionManager.setCurrentUser(user);
-        showLoading("Welcome to Aurora Stays\u2026");
+        showLoading("Welcome to Vespera\u2026");
 
-        PauseTransition pt = new PauseTransition(Duration.millis(220));
+        PauseTransition pt = new PauseTransition(Duration.millis(900));
         pt.setOnFinished(ev -> {
             try {
                 if (user instanceof Admin)
-                    nav("views/AdminDashboard.fxml",        "Aurora Stays \u2014 Management",  1180, 760);
+                    nav("views/AdminDashboard.fxml",        "Vespera \u2014 Management",  1180, 760);
                 else if (user instanceof Receptionist)
-                    nav("views/ReceptionistDashboard.fxml", "Aurora Stays \u2014 Reception",   1180, 760);
+                    nav("views/ReceptionistDashboard.fxml", "Vespera \u2014 Reception",   1180, 760);
                 else if (user instanceof Guest)
-                    nav("views/GuestDashboard.fxml",        "Aurora Stays \u2014 Guest Portal", 1180, 760);
+                    nav("views/GuestDashboard.fxml",        "Vespera \u2014 Guest Portal", 1180, 760);
             } catch (Exception e) {
                 dismissLoading();
                 Throwable cause = e.getCause() != null ? e.getCause() : e;
@@ -85,9 +92,9 @@ public class LoginController implements Initializable {
 
     @FXML private void goToRegister() {
         showLoading("Opening registration\u2026");
-        PauseTransition pt = new PauseTransition(Duration.millis(160));
+        PauseTransition pt = new PauseTransition(Duration.millis(700));
         pt.setOnFinished(ev -> {
-            try { nav("views/Register.fxml", "Aurora Stays \u2014 Create Account", 1080, 720); }
+            try { nav("views/Register.fxml", "Vespera \u2014 Create Account", 1080, 720); }
             catch (Exception e) {
                 dismissLoading();
                 showMsg("Navigation failed: " + e.getMessage(), false);

@@ -23,7 +23,6 @@ public class ToastManager {
         Popup popup = new Popup();
         popup.setAutoHide(false);
 
-        //Visual config per toast type
         String icon, bgColor, borderColor, accentColor, titleText, textColor, progressColor;
         switch (type) {
             case SUCCESS:
@@ -64,7 +63,6 @@ public class ToastManager {
                 break;
         }
 
-        //Root container
         VBox root = new VBox(0);
         root.setStyle(
                 "-fx-background-color: " + bgColor + ";" +
@@ -78,18 +76,15 @@ public class ToastManager {
         root.setMaxWidth(380);
         root.setPrefWidth(340);
 
-        //Accent top bar
         Region topBar = new Region();
         topBar.setPrefHeight(3);
         topBar.setMaxWidth(Double.MAX_VALUE);
         topBar.setStyle("-fx-background-color: " + accentColor + "; -fx-background-radius: 12 12 0 0;");
 
-        //Main content row
         HBox content = new HBox(14);
         content.setAlignment(Pos.CENTER_LEFT);
         content.setPadding(new Insets(14, 18, 12, 16));
 
-        // Icon circle
         StackPane iconWrapper = new StackPane();
         iconWrapper.setMinSize(34, 34);
         iconWrapper.setMaxSize(34, 34);
@@ -108,7 +103,6 @@ public class ToastManager {
         );
         iconWrapper.getChildren().add(iconLabel);
 
-        // Text column
         VBox textCol = new VBox(3);
         textCol.setAlignment(Pos.CENTER_LEFT);
 
@@ -133,7 +127,6 @@ public class ToastManager {
         HBox.setHgrow(textCol, Priority.ALWAYS);
         content.getChildren().addAll(iconWrapper, textCol);
 
-        //Progress bar
         StackPane progressContainer = new StackPane();
         progressContainer.setPrefHeight(3);
         progressContainer.setMaxWidth(Double.MAX_VALUE);
@@ -153,16 +146,14 @@ public class ToastManager {
 
         progressContainer.getChildren().addAll(progressTrack, progressBar);
 
-        //Assemble
         root.getChildren().addAll(topBar, content, progressContainer);
         popup.getContent().add(root);
 
-        //Position (top-right, cascading for multiple toasts)
+        // Position top-right with cascading offset for multiple toasts
         double x = owner.getX() + Math.max(10, owner.getWidth() - 398);
         double y = owner.getY() + 16;
         popup.show(owner, x, y);
 
-        //Slide in from right
         root.setTranslateX(70);
         root.setOpacity(0);
 
@@ -172,7 +163,6 @@ public class ToastManager {
         );
         enter.setInterpolator(Interpolator.EASE_OUT);
 
-        //Progress bar drain animation
         Timeline progressDrain = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(progressBar.prefWidthProperty(), 340)),
@@ -180,10 +170,8 @@ public class ToastManager {
                         new KeyValue(progressBar.prefWidthProperty(), 0, Interpolator.LINEAR))
         );
 
-        //Hold + drain
         PauseTransition hold = new PauseTransition(Duration.millis(DISPLAY_DURATION_MS));
 
-        //Slide out
         ParallelTransition exit = new ParallelTransition(
                 createTranslate(root, 0, 70, 260),
                 createFade(root, 1, 0, 260)
@@ -191,20 +179,17 @@ public class ToastManager {
         exit.setInterpolator(Interpolator.EASE_IN);
         exit.setOnFinished(e -> popup.hide());
 
-        //Play full sequence
         enter.setOnFinished(e -> progressDrain.play());
 
         SequentialTransition full = new SequentialTransition(enter, hold, exit);
         full.play();
     }
 
-    //Convenience Overloads
     public static void success(Window owner, String msg) { show(owner, msg, Type.SUCCESS); }
     public static void error  (Window owner, String msg) { show(owner, msg, Type.ERROR);   }
     public static void info   (Window owner, String msg) { show(owner, msg, Type.INFO);    }
     public static void warning(Window owner, String msg) { show(owner, msg, Type.WARNING); }
 
-    //Internal helpers
     private static TranslateTransition createTranslate(VBox node, double fromX, double toX, int ms) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(ms), node);
         tt.setFromX(fromX);

@@ -99,7 +99,7 @@ public class RegisterController implements Initializable {
         SessionManager.setCurrentUser(g);
 
         showLoading("Creating your account\u2026");
-        PauseTransition pt = new PauseTransition(Duration.millis(160));
+        PauseTransition pt = new PauseTransition(Duration.millis(800));
         pt.setOnFinished(ev -> {
             try {
                 Stage s = (Stage) usernameField.getScene().getWindow();
@@ -109,7 +109,7 @@ public class RegisterController implements Initializable {
                 }
                 NavigationManager.navigateTo(s,
                         "views/GuestDashboard.fxml",
-                        "Aurora Stays \u2014 Guest Portal");
+                        "Vespera \u2014 Guest Portal");
                 ToastManager.success(s, "Welcome, " + username + "! Your account is ready.");
             } catch (Exception e) {
                 dismissLoading();
@@ -122,13 +122,13 @@ public class RegisterController implements Initializable {
 
     @FXML private void goToLogin() {
         showLoading("Going to sign in\u2026");
-        PauseTransition pt = new PauseTransition(Duration.millis(140));
+        PauseTransition pt = new PauseTransition(Duration.millis(700));
         pt.setOnFinished(ev -> {
             try {
                 Stage s = (Stage) usernameField.getScene().getWindow();
                 NavigationManager.navigateTo(s,
                         "views/Login.fxml",
-                        "Aurora Stays \u2014 Sign In");
+                        "Vespera \u2014 Sign In");
             } catch (Exception e) {
                 dismissLoading();
                 showMsg("Navigation failed: " + e.getMessage(), false);

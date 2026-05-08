@@ -7,28 +7,34 @@
             fx:controller="controllers.RegisterController"
             prefWidth="1080" prefHeight="720" styleClass="auth-root">
     <left>
-        <VBox styleClass="left-panel" alignment="CENTER" spacing="18" prefWidth="420">
+        <VBox styleClass="left-panel" alignment="CENTER" spacing="18"             prefWidth="430">
             <padding><Insets top="50" bottom="50" left="46" right="46"/></padding>
-            <Label text="&#127770;" styleClass="hotel-icon"/>
-            <Label text="AURORA STAYS" styleClass="brand-name" wrapText="true" textAlignment="CENTER"/>
-            <Label text="JOIN THE  ✦  CLUB" styleClass="brand-sub"/>
-            <Region styleClass="brand-line" prefHeight="2" maxWidth="160"/>
-            <Region prefHeight="10"/>
-            <VBox spacing="12">
-                <Label text="WHAT YOU GET" styleClass="field-label"/>
-                <HBox spacing="12" alignment="CENTER_LEFT">
+
+            <Label text="&#127770;" styleClass="hotel-icon" alignment="CENTER"/>
+
+            <VBox alignment="CENTER" spacing="8">
+                <Label text="VESPERA" styleClass="brand-name" alignment="CENTER" textAlignment="CENTER" maxWidth="Infinity"/>
+                <Region styleClass="brand-line" prefHeight="2" maxWidth="170"/>
+                <Label text="JOIN THE  ✦  CLUB" styleClass="brand-sub" alignment="CENTER" textAlignment="CENTER" maxWidth="Infinity"/>
+            </VBox>
+
+            <Region prefHeight="6"/>
+
+            <VBox spacing="12" alignment="CENTER_LEFT" maxWidth="280">
+                <Label text="WHAT YOU GET" styleClass="field-label" alignment="CENTER" textAlignment="CENTER" maxWidth="Infinity"/>
+                <HBox spacing="14" alignment="CENTER_LEFT">
                     <Label text="&#127881;" styleClass="feature-icon"/>
                     <Label text="\$2,000 welcome credit" styleClass="feature-item"/>
                 </HBox>
-                <HBox spacing="12" alignment="CENTER_LEFT">
+                <HBox spacing="14" alignment="CENTER_LEFT">
                     <Label text="&#128274;" styleClass="feature-icon"/>
                     <Label text="Secure account &amp; data" styleClass="feature-item"/>
                 </HBox>
-                <HBox spacing="12" alignment="CENTER_LEFT">
+                <HBox spacing="14" alignment="CENTER_LEFT">
                     <Label text="&#9203;" styleClass="feature-icon"/>
                     <Label text="Book in seconds" styleClass="feature-item"/>
                 </HBox>
-                <HBox spacing="12" alignment="CENTER_LEFT">
+                <HBox spacing="14" alignment="CENTER_LEFT">
                     <Label text="&#127968;" styleClass="feature-icon"/>
                     <Label text="Personalised stays" styleClass="feature-item"/>
                 </HBox>
@@ -37,13 +43,15 @@
     </left>
     <center>
         <StackPane fx:id="rootStack" styleClass="right-panel">
-            <ScrollPane fitToWidth="true" styleClass="scroll-pane" hbarPolicy="NEVER">
-                <VBox fx:id="formBox" styleClass="right-panel" alignment="CENTER_LEFT" spacing="0" minWidth="540">
-                    <padding><Insets top="44" bottom="44" left="64" right="64"/></padding>
-                    <Label text="Create your account" styleClass="form-title"/>
-                    <Label text="A few details and you're in" styleClass="form-subtitle"/>
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                <VBox fx:id="formBox" styleClass="right-panel" alignment="TOP_CENTER" spacing="0" minWidth="540">
+                    <padding><Insets top="44" bottom="44" left="48" right="48"/></padding>
+                    <VBox alignment="CENTER" spacing="6">
+                        <Label text="Create your account" styleClass="form-title"/>
+                        <Label text="A few details and you're in" styleClass="form-subtitle"/>
+                    </VBox>
                     <Region prefHeight="22"/>
-                    <Label fx:id="messageLabel" styleClass="error-label" wrapText="true" maxWidth="420" managed="false" visible="false"/>
+                    <Label fx:id="messageLabel" styleClass="error-label" wrapText="true" maxWidth="Infinity" managed="false" visible="false"/>
                     <Region fx:id="messageSpace" prefHeight="12" managed="false" visible="false"/>
                     <HBox spacing="16">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">

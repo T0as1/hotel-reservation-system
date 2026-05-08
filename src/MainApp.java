@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
     public static Stage primaryStage;
-    public static final String APP_NAME = "Aurora Stays";
+    public static final String APP_NAME = "Vespera";
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -19,7 +19,7 @@ public class MainApp extends Application {
         scene.setFill(Color.web("#07090F"));
         scene.getStylesheets().add(getClass().getResource("/views/hotel.css").toExternalForm());
 
-        stage.setTitle(APP_NAME + " — Boutique Hotel Reservations");
+        stage.setTitle(APP_NAME + " — Twilight Resorts");
         stage.setScene(scene);
         stage.setResizable(true);
         stage.setMinWidth(900);

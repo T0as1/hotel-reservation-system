@@ -13,9 +13,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.animation.PauseTransition;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -38,7 +40,10 @@ public class AdminDashboardController implements Initializable {
     @FXML private ComboBox<String> roomTypeCombo;
     @FXML private Label roomMsg;
     @FXML private TableView<Room> roomsTable;
-    @FXML private TableColumn<Room,String> rNum, rFloor, rType, rPrice, rAvail;
+    @FXML private TableColumn<Room,String> rNum, rFloor, rType, rAmen, rPrice, rAvail;
+    @FXML private Label amenRoomLabel;
+    @FXML private ListView<String> roomAmenList;
+    @FXML private ComboBox<String> addAmenCombo;
 
     // Room types page
     @FXML private TextField typeNameField, typePriceField, typeCapField, typeDescField;
@@ -59,6 +64,7 @@ public class AdminDashboardController implements Initializable {
     // All reservations page
     @FXML private TableView<Reservation> allResTable;
     @FXML private TableColumn<Reservation,String> arId, arGuest, arRoom, arIn, arOut, arCost, arStatus;
+    @FXML private StackPane contentArea;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
@@ -67,14 +73,29 @@ public class AdminDashboardController implements Initializable {
         navUsername.setText(SessionManager.getCurrentUser().getUsername());
         setupAllTables();
         refreshStats();
+        startSyncTimer();
         AnimationUtils.fadeIn(statsPage);
+    }
+
+    private void startSyncTimer() {
+        javafx.animation.Timeline timer = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(javafx.util.Duration.millis(2000), e -> {
+                    if (HotelDatabase.checkForUpdates()) {
+                        setupAllTables();
+                        refreshStats();
+                    }
+                }));
+        timer.setCycleCount(javafx.animation.Timeline.INDEFINITE);
+        timer.play();
     }
 
     private void refreshStats() {
         AnimationUtils.animateCounter(totalGuests,  HotelDatabase.getAllGuests().size(), "", "");
         AnimationUtils.animateCounter(totalRooms,   HotelDatabase.getAllRooms().size(), "", "");
         AnimationUtils.animateCounter(totalRes,     HotelDatabase.getAllReservations().size(), "", "");
-        double rev = HotelDatabase.getAllReservations().stream().mapToDouble(Reservation::calculateTotalCost).sum();
+        double rev = HotelDatabase.getAllReservations().stream()
+                .filter(r -> r.getStatus() != enums.ReservationStatus.CANCELLED)
+                .mapToDouble(Reservation::calculateTotalCost).sum();
         AnimationUtils.animateMoney(totalRevenue, rev);
         statsResTable.setItems(FXCollections.observableArrayList(HotelDatabase.getAllReservations()));
     }
@@ -123,6 +144,7 @@ public class AdminDashboardController implements Initializable {
                 HotelDatabase.addRoomType(new RoomType(name, price, cap, desc));
                 showMsg(typeMsg, name + " added.", true); ToastManager.success(s, name + " room type added!");
             }
+            HotelDatabase.saveToFile();
             typesTable.setItems(FXCollections.observableArrayList(HotelDatabase.getAllRoomTypes()));
             refreshRoomTypeCombo();
         } catch (NumberFormatException e) { showMsg(typeMsg, "Enter valid price and capacity.", false); }
@@ -154,6 +176,7 @@ public class AdminDashboardController implements Initializable {
                 HotelDatabase.addAmenity(new Amenity(name, desc, cost));
                 showMsg(amenMsg, name + " added.", true); ToastManager.success(s, name + " amenity added!");
             }
+            HotelDatabase.saveToFile();
             amenitiesTable.setItems(FXCollections.observableArrayList(HotelDatabase.getAllAmenities()));
         } catch (NumberFormatException e) { showMsg(amenMsg, "Enter valid cost.", false); }
     }
@@ -180,9 +203,13 @@ public class AdminDashboardController implements Initializable {
         rNum.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getRoomNumber())));
         rFloor.setCellValueFactory(d -> new SimpleStringProperty("Floor " + d.getValue().getFloor()));
         rType.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getRoomType().getName()));
+        rAmen.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAmenities().size() + " items"));
         rPrice.setCellValueFactory(d -> new SimpleStringProperty(String.format("$%.2f", d.getValue().getRoomType().getPricePerNight())));
         rAvail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().isAvailable() ? "\u2713 Yes" : "\u2717 No"));
         roomsTable.setItems(FXCollections.observableArrayList(HotelDatabase.getAllRooms()));
+        roomsTable.getSelectionModel().selectedItemProperty().addListener((obs, old, sel) -> {
+            refreshRoomAmenities(sel);
+        });
         refreshRoomTypeCombo();
 
         tName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getName()));
@@ -219,7 +246,7 @@ public class AdminDashboardController implements Initializable {
     }
 
     @FXML private void showStats()     { show(statsPage, btnStats);     refreshStats(); }
-    @FXML private void showRooms()     { show(roomsPage, btnRooms); }
+    @FXML private void showRooms()     { show(roomsPage, btnRooms); roomsTable.setItems(FXCollections.observableArrayList(HotelDatabase.getAllRooms())); refreshRoomAmenityCombo(); }
     @FXML private void showTypes()     { show(typesPage, btnTypes); }
     @FXML private void showAmenities() { show(amenitiesPage, btnAmenity); }
     @FXML private void showGuests()    { show(guestsPage, btnGuests);
@@ -240,19 +267,73 @@ public class AdminDashboardController implements Initializable {
 
     private void showMsg(Label lbl, String msg, boolean ok) {
         lbl.setText((ok ? "\u2713  " : "\u26a0  ") + msg);
-        lbl.setStyle(ok
-                ? "-fx-background-color:rgba(20,80,40,0.25);-fx-text-fill:#86EFAC;-fx-padding:8 12;-fx-background-radius:6;-fx-border-color:rgba(34,197,94,0.3);-fx-border-width:1;-fx-border-radius:6;"
-                : "-fx-background-color:rgba(120,20,20,0.25);-fx-text-fill:#FCA5A5;-fx-padding:8 12;-fx-background-radius:6;-fx-border-color:rgba(239,68,68,0.3);-fx-border-width:1;-fx-border-radius:6;");
+        lbl.getStyleClass().removeAll("error-label", "success-label");
+        lbl.getStyleClass().add(ok ? "success-label" : "error-label");
         lbl.setVisible(true); lbl.setManaged(true);
         AnimationUtils.slideUp(lbl);
         if (!ok) AnimationUtils.shake(lbl);
     }
 
+    private void refreshRoomAmenities(Room room) {
+        if (room == null) { amenRoomLabel.setText("Select a room"); roomAmenList.getItems().clear(); return; }
+        amenRoomLabel.setText("Room " + room.getRoomNumber() + " \u2014 " + room.getRoomType().getName());
+        roomAmenList.getItems().clear();
+        for (Amenity a : room.getAmenities()) {
+            roomAmenList.getItems().add(a.getName() + "  ($" + String.format("%.2f", a.getAdditionalCost()) + ")");
+        }
+        refreshRoomAmenityCombo();
+    }
+
+    private void refreshRoomAmenityCombo() {
+        addAmenCombo.setItems(FXCollections.observableArrayList(
+                HotelDatabase.getAllAmenities().stream().map(Amenity::getName).collect(Collectors.toList())));
+    }
+
+    @FXML private void handleAddRoomAmenity() {
+        Room sel = roomsTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { showMsg(roomMsg, "Select a room first.", false); return; }
+        String amenName = addAmenCombo.getValue();
+        if (amenName == null) { showMsg(roomMsg, "Select an amenity.", false); return; }
+        for (Amenity existing : sel.getAmenities()) {
+            if (existing.getName().equalsIgnoreCase(amenName)) {
+                showMsg(roomMsg, "Room already has this amenity.", false); return;
+            }
+        }
+        Amenity a = HotelDatabase.getAmenityByName(amenName);
+        if (a == null) return;
+        sel.addAmenity(a);
+        HotelDatabase.saveToFile();
+        refreshRoomAmenities(sel);
+        roomsTable.refresh();
+        showMsg(roomMsg, "Amenity added to room.", true);
+        ToastManager.success((Stage) navUsername.getScene().getWindow(), amenName + " added to Room " + sel.getRoomNumber());
+    }
+
+    @FXML private void handleRemoveRoomAmenity() {
+        Room sel = roomsTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { showMsg(roomMsg, "Select a room first.", false); return; }
+        String selected = roomAmenList.getSelectionModel().getSelectedItem();
+        if (selected == null) { showMsg(roomMsg, "Select an amenity to remove.", false); return; }
+        String amenName = selected.split("  ")[0];
+        sel.getAmenities().removeIf(a -> a.getName().equalsIgnoreCase(amenName));
+        HotelDatabase.saveToFile();
+        refreshRoomAmenities(sel);
+        roomsTable.refresh();
+        showMsg(roomMsg, "Amenity removed.", true);
+        ToastManager.info((Stage) navUsername.getScene().getWindow(), amenName + " removed from Room " + sel.getRoomNumber());
+    }
+
     @FXML private void handleLogout() {
-        SessionManager.logout();
-        try {
-            Stage st = (Stage) navUsername.getScene().getWindow();
-            NavigationManager.navigateTo(st, "views/Login.fxml", "Aurora Stays — Sign In");
-        } catch (Exception e) { e.printStackTrace(); }
+        StackPane overlay = AnimationUtils.createLoadingOverlay("Signing out\u2026");
+        contentArea.getChildren().add(overlay);
+        PauseTransition pt = new PauseTransition(Duration.millis(600));
+        pt.setOnFinished(ev -> {
+            SessionManager.logout();
+            try {
+                Stage st = (Stage) navUsername.getScene().getWindow();
+                NavigationManager.navigateTo(st, "views/Login.fxml", "Vespera — Sign In");
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+        pt.play();
     }
 }

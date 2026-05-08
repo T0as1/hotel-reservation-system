@@ -22,7 +22,6 @@ import javafx.geometry.Insets;
 
 public class AnimationUtils {
 
-    //Shake (wrong password / validation error)
     public static void shake(Node node) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(55), node);
         tt.setFromX(0);
@@ -34,7 +33,6 @@ public class AnimationUtils {
         tt.play();
     }
 
-    //Fade In
     public static void fadeIn(Node node) {
         node.setOpacity(0);
         FadeTransition ft = new FadeTransition(Duration.millis(380), node);
@@ -44,7 +42,6 @@ public class AnimationUtils {
         ft.play();
     }
 
-    //Fade In Fast
     public static void fadeInFast(Node node) {
         node.setOpacity(0);
         FadeTransition ft = new FadeTransition(Duration.millis(180), node);
@@ -53,7 +50,6 @@ public class AnimationUtils {
         ft.play();
     }
 
-    //Fade Out
     public static void fadeOut(Node node, Runnable onFinished) {
         FadeTransition ft = new FadeTransition(Duration.millis(260), node);
         ft.setFromValue(node.getOpacity());
@@ -63,7 +59,6 @@ public class AnimationUtils {
         ft.play();
     }
 
-    //Slide Up (page / message entering)
     public static void slideUp(Node node) {
         node.setTranslateY(24);
         node.setOpacity(0);
@@ -77,7 +72,6 @@ public class AnimationUtils {
         new ParallelTransition(tt, ft).play();
     }
 
-    //Slide In From Right
     public static void slideInRight(Node node) {
         node.setTranslateX(36);
         node.setOpacity(0);
@@ -91,7 +85,6 @@ public class AnimationUtils {
         new ParallelTransition(tt, ft).play();
     }
 
-    //Slide In From Left
     public static void slideInLeft(Node node) {
         node.setTranslateX(-36);
         node.setOpacity(0);
@@ -105,7 +98,7 @@ public class AnimationUtils {
         new ParallelTransition(tt, ft).play();
     }
 
-    //Page Transition (used when switching sidebar pages)
+    // Page transition for sidebar page switches
     public static void pageTransition(Node node) {
         node.setOpacity(0);
         node.setTranslateY(12);
@@ -131,7 +124,6 @@ public class AnimationUtils {
         pt.play();
     }
 
-    //Pulse / Pop (success, booking confirmed)
     public static void pulse(Node node) {
         ScaleTransition grow = new ScaleTransition(Duration.millis(130), node);
         grow.setFromX(1);
@@ -150,7 +142,6 @@ public class AnimationUtils {
         new SequentialTransition(grow, shrink).play();
     }
 
-    //Button Press Feedback
     public static void buttonPress(Node node) {
         ScaleTransition down = new ScaleTransition(Duration.millis(90), node);
         down.setToX(0.94);
@@ -165,7 +156,6 @@ public class AnimationUtils {
         new SequentialTransition(down, up).play();
     }
 
-    //Card Hover Pop
     public static void cardHoverEnter(Node node) {
         ScaleTransition st = new ScaleTransition(Duration.millis(180), node);
         st.setToX(1.018);
@@ -182,25 +172,22 @@ public class AnimationUtils {
         st.play();
     }
 
-    //Flash Error (field error highlight)
     public static void flashError(Node node) {
         String original = node.getStyle();
-        node.setStyle(original + "-fx-border-color:#F87171 !important;-fx-border-width:2px;");
+        node.setStyle(original + "-fx-border-color:#F87171;-fx-border-width:2px;");
         PauseTransition pause = new PauseTransition(Duration.millis(2000));
         pause.setOnFinished(e -> node.setStyle(original));
         pause.play();
     }
 
-    //Flash Success (field success highlight)
     public static void flashSuccess(Node node) {
         String original = node.getStyle();
-        node.setStyle(original + "-fx-border-color:#34D399 !important;-fx-border-width:2px;");
+        node.setStyle(original + "-fx-border-color:#34D399;-fx-border-width:2px;");
         PauseTransition pause = new PauseTransition(Duration.millis(2000));
         pause.setOnFinished(e -> node.setStyle(original));
         pause.play();
     }
 
-    //Bounce
     public static void bounce(Node node) {
         TranslateTransition t1 = new TranslateTransition(Duration.millis(100), node);
         t1.setToY(-14);
@@ -221,7 +208,7 @@ public class AnimationUtils {
         new SequentialTransition(t1, t2, t3, t4).play();
     }
 
-    //Staggered Fade In (stat cards appearing one by one)
+    // Staggered entrance for stat cards
     public static void staggerFadeIn(java.util.List<Node> nodes, int delayMs) {
         for (int i = 0; i < nodes.size(); i++) {
             Node node = nodes.get(i);
@@ -255,7 +242,6 @@ public class AnimationUtils {
         }
     }
 
-    //Premium Loading Overlay
     public static StackPane createLoadingOverlay(String message) {
         StackPane overlay = new StackPane();
         overlay.setStyle("-fx-background-color: rgba(6,9,15,0.75);");
@@ -267,32 +253,34 @@ public class AnimationUtils {
         box.setStyle(
                 "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0B1226, #0E1530);" +
                         "-fx-background-radius: 16px;" +
-                        "-fx-border-color: rgba(0,229,168,0.3);" +
+                        "-fx-border-color: rgba(255,107,157,0.35);" +
                         "-fx-border-width: 1.5px;" +
                         "-fx-border-radius: 16px;" +
                         "-fx-padding: 32 36;" +
                         "-fx-effect: dropshadow(gaussian,rgba(0,0,0,0.7),28,0.4,0,8);"
         );
 
-        // Gold spinning ring using ProgressIndicator
         ProgressIndicator spinner = new ProgressIndicator(-1);
         spinner.setPrefSize(48, 48);
         spinner.setStyle(
-                "-fx-progress-color: #00E5A8;" +
-                        "-fx-accent: #00E5A8;"
+                "-fx-progress-color: #FF6B9D;" +
+                        "-fx-accent: #FF6B9D;"
         );
 
-        // Hotel brand tag
-        Label brand = new Label("AURORA");
+        Label brand = new Label("VESPERA");
+        brand.setAlignment(Pos.CENTER);
+        brand.setMaxWidth(Double.MAX_VALUE);
         brand.setStyle(
                 "-fx-font-size: 9px;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-text-fill: #00E5A8;" +
+                        "-fx-text-fill: #FFB86B;" +
                         "-fx-letter-spacing: 3px;" +
                         "-fx-opacity: 0.7;"
         );
 
         Label lbl = new Label(message);
+        lbl.setAlignment(Pos.CENTER);
+        lbl.setMaxWidth(200);
         lbl.setStyle(
                 "-fx-text-fill: #94A3B8;" +
                         "-fx-font-size: 13px;" +
@@ -300,7 +288,6 @@ public class AnimationUtils {
                         "-fx-text-alignment: center;"
         );
         lbl.setWrapText(true);
-        lbl.setMaxWidth(170);
 
         box.getChildren().addAll(spinner, brand, lbl);
         overlay.getChildren().add(box);
@@ -322,12 +309,10 @@ public class AnimationUtils {
         ft.play();
     }
 
-    //Number Counter Animation
     public static void animateCounter(Label label, double target, String prefix, String suffix) {
         Timeline tl = new Timeline();
         int frames = 24;
         for (int i = 1; i <= frames; i++) {
-            // Ease-out: starts fast, ends slow
             double progress = 1.0 - Math.pow(1.0 - (double) i / frames, 2);
             final double val = target * progress;
             tl.getKeyFrames().add(new KeyFrame(Duration.millis(i * 35), e ->
@@ -356,7 +341,7 @@ public class AnimationUtils {
         tl.play();
     }
 
-    //Shimmer / Skeleton Loading
+    // Shimmer skeleton loading pulse
     public static Timeline createShimmer(Node node) {
         Timeline tl = new Timeline(
                 new KeyFrame(Duration.ZERO,
@@ -370,7 +355,7 @@ public class AnimationUtils {
         return tl;
     }
 
-    //Glow Pulse (for active status indicators)
+    // Glow pulse for status indicators
     public static Timeline createGlowPulse(Node node) {
         Timeline tl = new Timeline(
                 new KeyFrame(Duration.ZERO,
@@ -384,7 +369,7 @@ public class AnimationUtils {
         return tl;
     }
 
-    //Rotate Continuously (for loading icons)
+    // Continuous rotation for loading icons
     public static RotateTransition createContinuousRotation(Node node) {
         RotateTransition rt = new RotateTransition(Duration.millis(1200), node);
         rt.setByAngle(360);
@@ -393,7 +378,6 @@ public class AnimationUtils {
         return rt;
     }
 
-    //Hover Scale Up
     public static void setupHoverScale(Node node, double scaleFactor) {
         node.setOnMouseEntered(e -> {
             ScaleTransition st = new ScaleTransition(Duration.millis(160), node);
@@ -411,7 +395,7 @@ public class AnimationUtils {
         });
     }
 
-    //Typewriter Label Effect
+    // Typewriter text reveal
     public static void typewriter(Label label, String text, int msPerChar) {
         label.setText("");
         Timeline tl = new Timeline();
@@ -425,7 +409,7 @@ public class AnimationUtils {
         tl.play();
     }
 
-    //Ripple Effect
+    // Ripple click feedback
     public static void ripple(Node node) {
         ScaleTransition st = new ScaleTransition(Duration.millis(200), node);
         st.setFromX(1.0);

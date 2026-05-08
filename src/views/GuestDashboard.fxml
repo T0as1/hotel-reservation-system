@@ -9,7 +9,7 @@
     <top>
         <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="16">
             <padding><Insets left="8" right="8"/></padding>
-            <Label text="&#127770; AURORA STAYS" styleClass="nav-brand"/>
+            <Label text="&#127770; VESPERA" styleClass="nav-brand"/>
             <Label text="&#8226;" styleClass="nav-dot"/>
             <Label text="GUEST PORTAL" styleClass="nav-section"/>
             <Region HBox.hgrow="ALWAYS"/>
@@ -23,7 +23,7 @@
         <VBox styleClass="sidebar">
             <VBox styleClass="sidebar-brand" alignment="CENTER" spacing="4">
                 <Label text="&#127770;" style="-fx-font-size:30px;"/>
-                <Label text="AURORA" style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#00E5A8;"/>
+                <Label text="VESPERA" style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#FFB86B;"/>
                 <Label text="STAYS" style="-fx-font-size:9px;-fx-text-fill:#A78BFA;"/>
             </VBox>
             <Region styleClass="sidebar-divider" maxWidth="1.7976931348623157E308"/>

@@ -1,9 +1,10 @@
 package models;
 import data.HotelDatabase;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Room {
+public class Room implements Serializable {
      private int roomNumber;
      private int floor;
      private RoomType roomType;
