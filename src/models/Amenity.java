@@ -1,6 +1,8 @@
 package models;
 
-public class Amenity {
+import java.io.Serializable;
+
+public class Amenity implements Serializable {
     private String name;
     private String description;
     private double additionalCost;

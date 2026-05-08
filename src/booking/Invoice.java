@@ -1,9 +1,10 @@
 package booking;
 
 import enums.PaymentMethod;
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Invoice {
+public class Invoice implements Serializable {
     private int invoiceID;
     private Reservation reservation;
     private double amount;

@@ -4,6 +4,7 @@ import enums.Role;
 import data.HotelDatabase;
 import booking.Reservation;
 import exceptions.*;
+import java.io.Serializable;
 import java.util.List;
 import java.time.LocalDate;
 

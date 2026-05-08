@@ -4,14 +4,13 @@ import models.Amenity;
 import models.Guest;
 import models.Room;
 
-
-import java.lang.reflect.Array;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 
-public class Reservation {
+public class Reservation implements Serializable {
     private final int reservationID;
     private Guest guest;
     private Room room;
@@ -39,9 +38,10 @@ public class Reservation {
     }
 
     public double calculateTotalCost() {
-        double totalCost = calculateDuration() * room.getRoomType().getPricePerNight();
+        long nights = calculateDuration();
+        double totalCost = nights * room.getRoomType().getPricePerNight();
         for (Amenity a : selectedAmenities) {
-            totalCost += a.getAdditionalCost();
+            totalCost += a.getAdditionalCost() * nights;
         }
         return totalCost;
     } // price per night is determined by room type

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AdminDashboardController"
+            prefWidth="1100" prefHeight="700">
+    <top>
+        <HBox styleClass="nav-bar" alignment="CENTER_LEFT" spacing="16">
+            <padding><Insets left="8" right="8"/></padding>
+            <Label text="&#127770; VESPERA" styleClass="nav-brand"/>
+            <Label text="&#8226;" styleClass="nav-dot"/>
+            <Label text="ADMIN PANEL" styleClass="nav-section"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="navUsername" styleClass="nav-user"/>
+            <Button text="Sign Out" styleClass="nav-logout-btn" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    <left>
+        <VBox styleClass="sidebar">
+            <VBox styleClass="sidebar-brand" alignment="CENTER" spacing="4">
+                <Label text="&#127770;" style="-fx-font-size:30px;"/>
+                <Label text="VESPERA" style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#FFB86B;"/>
+                <Label text="STAYS" style="-fx-font-size:9px;-fx-text-fill:#A78BFA;"/>
+            </VBox>
+            <Region styleClass="sidebar-divider" maxWidth="1.7976931348623157E308"/>
+            <Label text="MANAGEMENT" styleClass="sidebar-section"/>
+            <Button fx:id="btnStats"   text="&#128202;  Overview"     styleClass="sidebar-btn-active" onAction="#showStats"/>
+            <Button fx:id="btnRooms"   text="&#128716;  Rooms"        styleClass="sidebar-btn" onAction="#showRooms"/>
+            <Button fx:id="btnTypes"   text="&#127991;  Room Types"   styleClass="sidebar-btn" onAction="#showTypes"/>
+            <Button fx:id="btnAmenity" text="&#10024;  Amenities"     styleClass="sidebar-btn" onAction="#showAmenities"/>
+            <Button fx:id="btnGuests"  text="&#128101;  Guests"       styleClass="sidebar-btn" onAction="#showGuests"/>
+            <Button fx:id="btnAllRes"  text="&#128203;  Reservations" styleClass="sidebar-btn" onAction="#showAllRes"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea" styleClass="main-content">
+
+            <!-- STATS PAGE -->
+            <VBox fx:id="statsPage" spacing="20" visible="true" managed="true">
+                <Label text="Admin Overview" styleClass="page-title"/>
+                <HBox spacing="16">
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128101;" styleClass="stat-icon"/>
+                        <Label fx:id="totalGuests" text="0" styleClass="stat-value"/>
+                        <Label text="TOTAL GUESTS" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128716;" styleClass="stat-icon"/>
+                        <Label fx:id="totalRooms" text="0" styleClass="stat-value"/>
+                        <Label text="TOTAL ROOMS" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128203;" styleClass="stat-icon"/>
+                        <Label fx:id="totalRes" text="0" styleClass="stat-value"/>
+                        <Label text="RESERVATIONS" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="&#128176;" styleClass="stat-icon"/>
+                        <Label fx:id="totalRevenue" text="\$0" styleClass="stat-value"/>
+                        <Label text="TOTAL REVENUE" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+                <VBox styleClass="content-card" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="card-header"><Label text="All Reservations" styleClass="card-title"/></HBox>
+                    <TableView fx:id="statsResTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="sColId"     text="ID"        prefWidth="60"/>
+                            <TableColumn fx:id="sColGuest"  text="Guest"     prefWidth="120"/>
+                            <TableColumn fx:id="sColRoom"   text="Room"      prefWidth="70"/>
+                            <TableColumn fx:id="sColNights" text="Nights"    prefWidth="65"/>
+                            <TableColumn fx:id="sColIn"     text="Check-In"  prefWidth="100"/>
+                            <TableColumn fx:id="sColOut"    text="Check-Out" prefWidth="100"/>
+                            <TableColumn fx:id="sColCost"   text="Total"     prefWidth="95"/>
+                            <TableColumn fx:id="sColStatus" text="Status"    prefWidth="110"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- ROOMS PAGE -->
+            <VBox fx:id="roomsPage" spacing="16" visible="false" managed="false">
+                <Label text="Room Management" styleClass="page-title"/>
+                <HBox spacing="16" VBox.vgrow="ALWAYS">
+                    <VBox styleClass="form-card" prefWidth="290" spacing="12">
+                        <Label text="ADD / EDIT ROOM" styleClass="field-label"/>
+                        <VBox spacing="5">
+                            <Label text="ROOM NUMBER" styleClass="field-label"/>
+                            <TextField fx:id="roomNumField" styleClass="input-field" prefHeight="40" promptText="e.g. 301"/>
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label text="FLOOR" styleClass="field-label"/>
+                            <TextField fx:id="roomFloorField" styleClass="input-field" prefHeight="40" promptText="e.g. 3"/>
+                        </VBox>
+                        <VBox spacing="5">
+                            <Label text="ROOM TYPE" styleClass="field-label"/>
+                            <ComboBox fx:id="roomTypeCombo" styleClass="combo-field" prefHeight="40" maxWidth="1.7976931348623157E308"/>
+                        </VBox>
+                        <Label fx:id="roomMsg" managed="false" visible="false" wrapText="true"/>
+                        <HBox spacing="10">
+                            <Button text="Add Room" styleClass="primary-btn" onAction="#addRoom" prefHeight="40" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/>
+                            <Button text="Delete" styleClass="danger-btn" onAction="#deleteRoom" prefHeight="40" prefWidth="80"/>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="content-card" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="card-header"><Label text="All Rooms" styleClass="card-title"/></HBox>
+                        <TableView fx:id="roomsTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="rNum"   text="Number"      prefWidth="80"/>
+                                <TableColumn fx:id="rFloor" text="Floor"       prefWidth="60"/>
+                                <TableColumn fx:id="rType"  text="Type"        prefWidth="100"/>
+                                <TableColumn fx:id="rAmen"  text="Amenities"   prefWidth="90"/>
+                                <TableColumn fx:id="rPrice" text="Price/Night" prefWidth="100"/>
+                                <TableColumn fx:id="rAvail" text="Available"   prefWidth="90"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    <VBox styleClass="content-card" prefWidth="240" spacing="10">
+                        <HBox styleClass="card-header"><Label text="Room Amenities" styleClass="card-title"/></HBox>
+                        <Label fx:id="amenRoomLabel" text="Select a room" style="-fx-text-fill:#9AA3BE;-fx-font-size:12px;-fx-padding:0 0 4 0;"/>
+                        <Label text="Current:" styleClass="field-label"/>
+                        <ListView fx:id="roomAmenList" prefHeight="140" style="-fx-background-color:#0E1530;-fx-control-inner-background:#0E1530;-fx-background-radius:8px;-fx-border-color:#1E293B;-fx-border-radius:8px;"/>
+                        <Label text="Add Amenity:" styleClass="field-label"/>
+                        <ComboBox fx:id="addAmenCombo" styleClass="combo-field" prefHeight="36" maxWidth="1.7976931348623157E308"/>
+                        <HBox spacing="8">
+                            <Button text="Add" styleClass="primary-btn" onAction="#handleAddRoomAmenity" prefHeight="36" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/>
+                            <Button text="Remove" styleClass="danger-btn" onAction="#handleRemoveRoomAmenity" prefHeight="36" prefWidth="80"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- ROOM TYPES PAGE -->
+            <VBox fx:id="typesPage" spacing="16" visible="false" managed="false">
+                <Label text="Room Type Management" styleClass="page-title"/>
+                <HBox spacing="16" VBox.vgrow="ALWAYS">
+                    <VBox styleClass="form-card" prefWidth="310" spacing="12">
+                        <Label text="ADD / EDIT ROOM TYPE" styleClass="field-label"/>
+                        <VBox spacing="5"><Label text="NAME" styleClass="field-label"/>
+                            <TextField fx:id="typeNameField" styleClass="input-field" prefHeight="40" promptText="e.g. Penthouse Suite"/></VBox>
+                        <VBox spacing="5"><Label text="PRICE PER NIGHT ($)" styleClass="field-label"/>
+                            <TextField fx:id="typePriceField" styleClass="input-field" prefHeight="40" promptText="e.g. 350"/></VBox>
+                        <VBox spacing="5"><Label text="CAPACITY" styleClass="field-label"/>
+                            <TextField fx:id="typeCapField" styleClass="input-field" prefHeight="40" promptText="e.g. 2"/></VBox>
+                        <VBox spacing="5"><Label text="DESCRIPTION" styleClass="field-label"/>
+                            <TextField fx:id="typeDescField" styleClass="input-field" prefHeight="40" promptText="Short description"/></VBox>
+                        <Label fx:id="typeMsg" managed="false" visible="false" wrapText="true"/>
+                        <HBox spacing="10">
+                            <Button text="Save" styleClass="primary-btn" onAction="#saveRoomType" prefHeight="40" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/>
+                            <Button text="Delete" styleClass="danger-btn" onAction="#deleteRoomType" prefHeight="40" prefWidth="80"/>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="content-card" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="card-header"><Label text="All Room Types" styleClass="card-title"/></HBox>
+                        <TableView fx:id="typesTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="tName"  text="Name"        prefWidth="120"/>
+                                <TableColumn fx:id="tPrice" text="Price/Night" prefWidth="110"/>
+                                <TableColumn fx:id="tCap"   text="Capacity"    prefWidth="90"/>
+                                <TableColumn fx:id="tDesc"  text="Description" prefWidth="240"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- AMENITIES PAGE -->
+            <VBox fx:id="amenitiesPage" spacing="16" visible="false" managed="false">
+                <Label text="Amenity Management" styleClass="page-title"/>
+                <HBox spacing="16" VBox.vgrow="ALWAYS">
+                    <VBox styleClass="form-card" prefWidth="290" spacing="12">
+                        <Label text="ADD / EDIT AMENITY" styleClass="field-label"/>
+                        <VBox spacing="5"><Label text="NAME" styleClass="field-label"/>
+                            <TextField fx:id="amenNameField" styleClass="input-field" prefHeight="40" promptText="e.g. Private Jacuzzi"/></VBox>
+                        <VBox spacing="5"><Label text="DESCRIPTION" styleClass="field-label"/>
+                            <TextField fx:id="amenDescField" styleClass="input-field" prefHeight="40" promptText="Short description"/></VBox>
+                        <VBox spacing="5"><Label text="ADDITIONAL COST ($)" styleClass="field-label"/>
+                            <TextField fx:id="amenCostField" styleClass="input-field" prefHeight="40" promptText="e.g. 25"/></VBox>
+                        <Label fx:id="amenMsg" managed="false" visible="false" wrapText="true"/>
+                        <HBox spacing="10">
+                            <Button text="Save" styleClass="primary-btn" onAction="#saveAmenity" prefHeight="40" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/>
+                            <Button text="Delete" styleClass="danger-btn" onAction="#deleteAmenity" prefHeight="40" prefWidth="80"/>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="content-card" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="card-header"><Label text="All Amenities" styleClass="card-title"/></HBox>
+                        <TableView fx:id="amenitiesTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="aName" text="Name"        prefWidth="130"/>
+                                <TableColumn fx:id="aDesc" text="Description" prefWidth="240"/>
+                                <TableColumn fx:id="aCost" text="Extra Cost"  prefWidth="110"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- GUESTS PAGE -->
+            <VBox fx:id="guestsPage" spacing="16" visible="false" managed="false">
+                <Label text="Guest Management" styleClass="page-title"/>
+                <VBox styleClass="content-card" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="card-header"><Label text="All Registered Guests" styleClass="card-title"/></HBox>
+                    <TableView fx:id="guestsTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="gUser"    text="Username"    prefWidth="140"/>
+                            <TableColumn fx:id="gGender"  text="Gender"      prefWidth="90"/>
+                            <TableColumn fx:id="gDob"     text="Date of Birth" prefWidth="130"/>
+                            <TableColumn fx:id="gBalance" text="Balance"     prefWidth="110"/>
+                            <TableColumn fx:id="gAddress" text="Address"     prefWidth="240"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- ALL RESERVATIONS PAGE -->
+            <VBox fx:id="allResPage" spacing="16" visible="false" managed="false">
+                <Label text="All Reservations" styleClass="page-title"/>
+                <VBox styleClass="content-card" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="card-header"><Label text="System-wide Reservations" styleClass="card-title"/></HBox>
+                    <TableView fx:id="allResTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="arId"     text="ID"        prefWidth="60"/>
+                            <TableColumn fx:id="arGuest"  text="Guest"     prefWidth="120"/>
+                            <TableColumn fx:id="arRoom"   text="Room"      prefWidth="70"/>
+                            <TableColumn fx:id="arNights" text="Nights"    prefWidth="65"/>
+                            <TableColumn fx:id="arIn"     text="Check-In"  prefWidth="100"/>
+                            <TableColumn fx:id="arOut"    text="Check-Out" prefWidth="100"/>
+                            <TableColumn fx:id="arCost"   text="Total"     prefWidth="95"/>
+                            <TableColumn fx:id="arStatus" text="Status"    prefWidth="110"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+        </StackPane>
+    </center>
+</BorderPane>

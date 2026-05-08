@@ -47,11 +47,11 @@ public class Guest extends User implements Payable {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
         if (dateOfBirth.getYear() > 2008)
             throw new DobException("Date of birth is invalid, only 18+ are allowed to register");
         if (dateOfBirth.getYear() < 1900 )
             throw new DobException("Date of birth can not be earlier than 1900");
+        this.dateOfBirth = dateOfBirth;
     }
 
     public double getBalance() {

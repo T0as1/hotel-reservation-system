@@ -3,9 +3,10 @@ package models;
 import exceptions.InvalidUsernameException;
 import exceptions.InvalidPasswordException;
 
+import java.io.Serializable;
 import java.util.Scanner;
 
-abstract public class User {
+abstract public class User implements Serializable {
      protected String username;
      protected String password;
      public User(){}
