@@ -38,9 +38,10 @@ public class Reservation implements Serializable {
     }
 
     public double calculateTotalCost() {
-        double totalCost = calculateDuration() * room.getRoomType().getPricePerNight();
+        long nights = calculateDuration();
+        double totalCost = nights * room.getRoomType().getPricePerNight();
         for (Amenity a : selectedAmenities) {
-            totalCost += a.getAdditionalCost();
+            totalCost += a.getAdditionalCost() * nights;
         }
         return totalCost;
     } // price per night is determined by room type

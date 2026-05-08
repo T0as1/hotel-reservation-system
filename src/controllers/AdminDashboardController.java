@@ -33,7 +33,7 @@ public class AdminDashboardController implements Initializable {
     // Stats page
     @FXML private Label totalGuests, totalRooms, totalRes, totalRevenue;
     @FXML private TableView<Reservation> statsResTable;
-    @FXML private TableColumn<Reservation,String> sColId, sColGuest, sColRoom, sColIn, sColOut, sColCost, sColStatus;
+    @FXML private TableColumn<Reservation,String> sColId, sColGuest, sColRoom, sColNights, sColIn, sColOut, sColCost, sColStatus;
 
     // Rooms page
     @FXML private TextField roomNumField, roomFloorField;
@@ -63,7 +63,7 @@ public class AdminDashboardController implements Initializable {
 
     // All reservations page
     @FXML private TableView<Reservation> allResTable;
-    @FXML private TableColumn<Reservation,String> arId, arGuest, arRoom, arIn, arOut, arCost, arStatus;
+    @FXML private TableColumn<Reservation,String> arId, arGuest, arRoom, arNights, arIn, arOut, arCost, arStatus;
     @FXML private StackPane contentArea;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("MMM dd, yyyy");
@@ -195,6 +195,7 @@ public class AdminDashboardController implements Initializable {
         sColId.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getReservationID())));
         sColGuest.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getGuest().getUsername()));
         sColRoom.setCellValueFactory(d -> new SimpleStringProperty("Room " + d.getValue().getRoom().getRoomNumber()));
+        sColNights.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().calculateDuration())));
         sColIn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCheckInDate().format(FMT)));
         sColOut.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCheckOutDate().format(FMT)));
         sColCost.setCellValueFactory(d -> new SimpleStringProperty(String.format("$%.2f", d.getValue().calculateTotalCost())));
@@ -233,6 +234,7 @@ public class AdminDashboardController implements Initializable {
         arId.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getReservationID())));
         arGuest.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getGuest().getUsername()));
         arRoom.setCellValueFactory(d -> new SimpleStringProperty("Room " + d.getValue().getRoom().getRoomNumber()));
+        arNights.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().calculateDuration())));
         arIn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCheckInDate().format(FMT)));
         arOut.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCheckOutDate().format(FMT)));
         arCost.setCellValueFactory(d -> new SimpleStringProperty(String.format("$%.2f", d.getValue().calculateTotalCost())));

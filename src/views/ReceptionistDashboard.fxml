@@ -61,11 +61,12 @@
                     <TableView fx:id="overviewTable" styleClass="table-view" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="oId"     text="ID"        prefWidth="60"/>
-                            <TableColumn fx:id="oGuest"  text="Guest"     prefWidth="140"/>
-                            <TableColumn fx:id="oRoom"   text="Room"      prefWidth="90"/>
-                            <TableColumn fx:id="oIn"     text="Check-In"  prefWidth="120"/>
-                            <TableColumn fx:id="oOut"    text="Check-Out" prefWidth="120"/>
-                            <TableColumn fx:id="oStatus" text="Status"    prefWidth="130"/>
+                            <TableColumn fx:id="oGuest"  text="Guest"     prefWidth="130"/>
+                            <TableColumn fx:id="oRoom"   text="Room"      prefWidth="80"/>
+                            <TableColumn fx:id="oNights" text="Nights"    prefWidth="65"/>
+                            <TableColumn fx:id="oIn"     text="Check-In"  prefWidth="110"/>
+                            <TableColumn fx:id="oOut"    text="Check-Out" prefWidth="110"/>
+                            <TableColumn fx:id="oStatus" text="Status"    prefWidth="120"/>
                         </columns>
                     </TableView>
                 </VBox>

@@ -46,6 +46,17 @@ public class HotelDatabase {
             rooms.add(new Room(201, 2, roomTypes.get(2)));
             rooms.add(new Room(301, 3, roomTypes.get(3)));
 
+            // Assign default amenities to rooms
+            rooms.get(0).addAmenity(amenities.get(0)); // Room 101: WiFi
+            rooms.get(1).addAmenity(amenities.get(0)); // Room 102: WiFi
+            rooms.get(1).addAmenity(amenities.get(1)); // Room 102: TV
+            rooms.get(2).addAmenity(amenities.get(0)); // Room 201: WiFi
+            rooms.get(2).addAmenity(amenities.get(1)); // Room 201: TV
+            rooms.get(2).addAmenity(amenities.get(2)); // Room 201: Mini-bar
+            rooms.get(3).addAmenity(amenities.get(0)); // Room 301: WiFi
+            rooms.get(3).addAmenity(amenities.get(1)); // Room 301: TV
+            rooms.get(3).addAmenity(amenities.get(2)); // Room 301: Mini-bar
+
             Guest g = new Guest("Ahmed", "@4med", LocalDate.of(2000,10,7), 2000.0, "21 Street", Gender.MALE, "WiFi");
             guests.add(g);
         }
@@ -272,7 +283,8 @@ public class HotelDatabase {
             if (res.getRoom().getRoomNumber() == roomNumber
 		&& res.getStatus() != ReservationStatus.CANCELLED
     		&& res.getStatus() != ReservationStatus.CHECKED_OUT
-    		&& res.getStatus() != ReservationStatus.COMPLETED) {
+    		&& res.getStatus() != ReservationStatus.COMPLETED
+    		&& res.getStatus() != ReservationStatus.AWAITING_CHECKOUT) {
                 return true;
             }
         }
@@ -285,7 +297,8 @@ public class HotelDatabase {
         for (Reservation res : getAllReservations()) {
             // if room number matches and reservation status is NOT: cancelled,checkedOut,completed
             if (res.getRoom().getRoomNumber() == roomNum && !(res.getStatus().equals(ReservationStatus.CANCELLED)
-            || res.getStatus().equals(ReservationStatus.CHECKED_OUT) || res.getStatus().equals(ReservationStatus.COMPLETED))) {
+            || res.getStatus().equals(ReservationStatus.CHECKED_OUT) || res.getStatus().equals(ReservationStatus.COMPLETED)
+            || res.getStatus().equals(ReservationStatus.AWAITING_CHECKOUT))) {
 
                 //if the room is the same, check if the new check-in date is before the old checkout date
                 //and if the new check-out is after the old check-in date, this means a clash is found

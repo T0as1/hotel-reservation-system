@@ -67,12 +67,13 @@
                     <TableView fx:id="statsResTable" styleClass="table-view" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="sColId"     text="ID"        prefWidth="60"/>
-                            <TableColumn fx:id="sColGuest"  text="Guest"     prefWidth="130"/>
-                            <TableColumn fx:id="sColRoom"   text="Room"      prefWidth="80"/>
-                            <TableColumn fx:id="sColIn"     text="Check-In"  prefWidth="110"/>
-                            <TableColumn fx:id="sColOut"    text="Check-Out" prefWidth="110"/>
-                            <TableColumn fx:id="sColCost"   text="Total"     prefWidth="100"/>
-                            <TableColumn fx:id="sColStatus" text="Status"    prefWidth="120"/>
+                            <TableColumn fx:id="sColGuest"  text="Guest"     prefWidth="120"/>
+                            <TableColumn fx:id="sColRoom"   text="Room"      prefWidth="70"/>
+                            <TableColumn fx:id="sColNights" text="Nights"    prefWidth="65"/>
+                            <TableColumn fx:id="sColIn"     text="Check-In"  prefWidth="100"/>
+                            <TableColumn fx:id="sColOut"    text="Check-Out" prefWidth="100"/>
+                            <TableColumn fx:id="sColCost"   text="Total"     prefWidth="95"/>
+                            <TableColumn fx:id="sColStatus" text="Status"    prefWidth="110"/>
                         </columns>
                     </TableView>
                 </VBox>
@@ -220,12 +221,13 @@
                     <TableView fx:id="allResTable" styleClass="table-view" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="arId"     text="ID"        prefWidth="60"/>
-                            <TableColumn fx:id="arGuest"  text="Guest"     prefWidth="130"/>
-                            <TableColumn fx:id="arRoom"   text="Room"      prefWidth="80"/>
-                            <TableColumn fx:id="arIn"     text="Check-In"  prefWidth="110"/>
-                            <TableColumn fx:id="arOut"    text="Check-Out" prefWidth="110"/>
-                            <TableColumn fx:id="arCost"   text="Total"     prefWidth="100"/>
-                            <TableColumn fx:id="arStatus" text="Status"    prefWidth="120"/>
+                            <TableColumn fx:id="arGuest"  text="Guest"     prefWidth="120"/>
+                            <TableColumn fx:id="arRoom"   text="Room"      prefWidth="70"/>
+                            <TableColumn fx:id="arNights" text="Nights"    prefWidth="65"/>
+                            <TableColumn fx:id="arIn"     text="Check-In"  prefWidth="100"/>
+                            <TableColumn fx:id="arOut"    text="Check-Out" prefWidth="100"/>
+                            <TableColumn fx:id="arCost"   text="Total"     prefWidth="95"/>
+                            <TableColumn fx:id="arStatus" text="Status"    prefWidth="110"/>
                         </columns>
                     </TableView>
                 </VBox>

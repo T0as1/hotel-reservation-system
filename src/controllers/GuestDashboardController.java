@@ -162,7 +162,8 @@ public class GuestDashboardController implements Initializable {
         long active = mine.stream().filter(r ->
                 r.getStatus() != ReservationStatus.CANCELLED
                 && r.getStatus() != ReservationStatus.CHECKED_OUT
-                && r.getStatus() != ReservationStatus.COMPLETED).count();
+                && r.getStatus() != ReservationStatus.COMPLETED
+                && r.getStatus() != ReservationStatus.AWAITING_CHECKOUT).count();
         double spent = mine.stream()
                 .filter(r -> r.getStatus() != ReservationStatus.CANCELLED)
                 .mapToDouble(Reservation::calculateTotalCost).sum();
@@ -195,6 +196,14 @@ public class GuestDashboardController implements Initializable {
         typeFilter.getItems().add("All Types");
         for (RoomType rt : HotelDatabase.getAllRoomTypes()) typeFilter.getItems().add(rt.getName());
         typeFilter.setValue("All Types");
+    }
+
+    private int getSelectedNights() {
+        LocalDate in = checkInPicker.getValue();
+        LocalDate out = checkOutPicker.getValue();
+        if (in != null && out != null && out.isAfter(in))
+            return (int) ChronoUnit.DAYS.between(in, out);
+        return 1;
     }
 
     private void startAvailabilityService() {
@@ -253,6 +262,11 @@ public class GuestDashboardController implements Initializable {
         card.getStyleClass().add("room-card");
         card.setAlignment(Pos.CENTER_LEFT);
 
+        int nights = getSelectedNights();
+        double perNight = r.getRoomType().getPricePerNight();
+        double amenitySum = r.getAmenities().stream().mapToDouble(Amenity::getAdditionalCost).sum();
+        double totalRoom = (perNight + amenitySum) * nights;
+
         String icon = switch (r.getRoomType().getName().toLowerCase()) {
             case "suite", "penthouse suite" -> "🏰";
             case "double" -> "🛏️";
@@ -264,8 +278,11 @@ public class GuestDashboardController implements Initializable {
         Label type = new Label(r.getRoomType().getName().toUpperCase()); type.getStyleClass().add("room-card-type");
         Label meta = new Label("Floor " + r.getFloor() + "  •  Capacity " + r.getRoomType().getCapacity());
         meta.getStyleClass().add("room-card-meta");
-        Label price = new Label(String.format("$%.0f", r.getRoomType().getPricePerNight()) + " / night");
+        Label price = new Label(String.format("$%.0f", perNight) + " / night");
         price.getStyleClass().add("room-card-price");
+
+        Label total = new Label(String.format("$%.0f", totalRoom) + " total for " + nights + " night" + (nights > 1 ? "s" : ""));
+        total.getStyleClass().add("room-card-total");
 
         Button book = new Button("✦ BOOK NOW");
         book.getStyleClass().add("primary-btn");
@@ -273,7 +290,19 @@ public class GuestDashboardController implements Initializable {
         book.setPrefHeight(38);
         book.setOnAction(e -> bookRoom(r));
 
-        card.getChildren().addAll(iconL, num, type, meta, price, book);
+        card.getChildren().addAll(iconL, num, type, meta, price);
+        // Room amenities
+        if (!r.getAmenities().isEmpty()) {
+            FlowPane amenityTags = new FlowPane(6, 4);
+            amenityTags.setAlignment(Pos.CENTER_LEFT);
+            for (Amenity a : r.getAmenities()) {
+                Label tag = new Label(a.getName() + " (+$" + String.format("%.0f", a.getAdditionalCost()) + "/night)");
+                tag.getStyleClass().add("amenity-tag");
+                amenityTags.getChildren().add(tag);
+            }
+            card.getChildren().add(amenityTags);
+        }
+        card.getChildren().addAll(total, book);
         AnimationUtils.setupHoverScale(card, 1.025);
         return card;
     }
@@ -290,6 +319,10 @@ public class GuestDashboardController implements Initializable {
         }
         long nights = ChronoUnit.DAYS.between(in, out);
         Reservation res = new Reservation(nextReservationId++, guest, r, in, out);
+        // Auto-add room amenities to the reservation
+        for (Amenity a : r.getAmenities()) {
+            res.addAmenity(a);
+        }
         double cost = res.calculateTotalCost();
         double alreadyHeld = HotelDatabase.getAllReservations().stream()
                 .filter(x -> x.getGuest().getUsername().equalsIgnoreCase(guest.getUsername())
@@ -315,6 +348,7 @@ public class GuestDashboardController implements Initializable {
         if (sel.getStatus() == ReservationStatus.CANCELLED
                 || sel.getStatus() == ReservationStatus.CHECKED_OUT
                 || sel.getStatus() == ReservationStatus.COMPLETED
+                || sel.getStatus() == ReservationStatus.AWAITING_CHECKOUT
                 || sel.getStatus() == ReservationStatus.CHECKED_IN) {
             ToastManager.warning(s, "This reservation cannot be cancelled."); return;
         }
@@ -404,7 +438,8 @@ public class GuestDashboardController implements Initializable {
             refreshCheckoutBox(); return;
         }
         if (r.getStatus() == ReservationStatus.CHECKED_OUT
-                || r.getStatus() == ReservationStatus.COMPLETED) {
+                || r.getStatus() == ReservationStatus.COMPLETED
+                || r.getStatus() == ReservationStatus.AWAITING_CHECKOUT) {
             showCheckoutMsg("This reservation has already been paid.", false);
             refreshCheckoutBox(); return;
         }
@@ -421,7 +456,7 @@ public class GuestDashboardController implements Initializable {
             HotelDatabase.addInvoice(inv);
             guest.pay(amount);
             r.getRoom().release();
-            r.setStatus(ReservationStatus.COMPLETED);
+            r.setStatus(ReservationStatus.AWAITING_CHECKOUT);
             HotelDatabase.saveToFile();
 
             ToastManager.success(s, "Payment of $" + String.format("%.2f", amount) + " processed via " + selectedPayment.name());

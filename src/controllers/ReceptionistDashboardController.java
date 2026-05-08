@@ -38,7 +38,7 @@ public class ReceptionistDashboardController implements Initializable {
 
     @FXML private Label pendingCount, checkedInCount, availableCount;
     @FXML private TableView<Reservation> overviewTable;
-    @FXML private TableColumn<Reservation,String> oId, oGuest, oRoom, oIn, oOut, oStatus;
+    @FXML private TableColumn<Reservation,String> oId, oGuest, oRoom, oNights, oIn, oOut, oStatus;
 
     @FXML private ComboBox<String> checkInBox, checkOutBox;
     @FXML private Label checkInMsg, checkOutMsg;
@@ -94,6 +94,7 @@ public class ReceptionistDashboardController implements Initializable {
         oId.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getReservationID())));
         oGuest.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getGuest().getUsername()));
         oRoom.setCellValueFactory(d -> new SimpleStringProperty("Room " + d.getValue().getRoom().getRoomNumber()));
+        oNights.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().calculateDuration())));
         oIn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCheckInDate().format(FMT)));
         oOut.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCheckOutDate().format(FMT)));
         oStatus.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getStatus().name()));
@@ -131,11 +132,9 @@ public class ReceptionistDashboardController implements Initializable {
 
     private void refreshCheckOutBox() {
         List<String> items = HotelDatabase.getAllReservations().stream()
-                .filter(r -> r.getStatus() == ReservationStatus.CHECKED_IN
-                          || r.getStatus() == ReservationStatus.COMPLETED)
+                .filter(r -> r.getStatus() == ReservationStatus.AWAITING_CHECKOUT)
                 .map(r -> "#" + r.getReservationID() + " \u2014 " + r.getGuest().getUsername()
-                        + " \u2014 Room " + r.getRoom().getRoomNumber()
-                        + (r.getStatus() == ReservationStatus.COMPLETED ? " (paid)" : ""))
+                        + " \u2014 Room " + r.getRoom().getRoomNumber() + " (paid)")
                 .collect(Collectors.toList());
         checkOutBox.setItems(FXCollections.observableArrayList(items));
     }
@@ -149,16 +148,14 @@ public class ReceptionistDashboardController implements Initializable {
         catch (Exception e) { showMsg(checkOutMsg, "Invalid selection.", false); return; }
         Reservation res = HotelDatabase.findReservationById(id);
         if (res == null) { showMsg(checkOutMsg, "Reservation not found.", false); return; }
-        if (res.getStatus() == ReservationStatus.COMPLETED) {
-            res.setStatus(ReservationStatus.CHECKED_OUT);
-            showMsg(checkOutMsg, res.getGuest().getUsername() + " checkout confirmed from Room " + res.getRoom().getRoomNumber(), true);
-            ToastManager.success(s, res.getGuest().getUsername() + " checkout confirmed.");
-        } else {
-            res.setStatus(ReservationStatus.CHECKED_OUT);
-            res.getRoom().release();
-            showMsg(checkOutMsg, res.getGuest().getUsername() + " checked out from Room " + res.getRoom().getRoomNumber(), true);
-            ToastManager.info(s, res.getGuest().getUsername() + " checked out.");
+        if (res.getStatus() != ReservationStatus.AWAITING_CHECKOUT) {
+            showMsg(checkOutMsg, "Guest has not paid yet. Complete payment first.", false);
+            ToastManager.warning(s, "Guest must pay before checkout.");
+            return;
         }
+        res.setStatus(ReservationStatus.CHECKED_OUT);
+        showMsg(checkOutMsg, res.getGuest().getUsername() + " checkout confirmed from Room " + res.getRoom().getRoomNumber(), true);
+        ToastManager.success(s, res.getGuest().getUsername() + " checkout confirmed.");
         HotelDatabase.saveToFile();
         refreshOverview(); refreshCheckOutBox();
     }

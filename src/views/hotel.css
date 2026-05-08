@@ -465,6 +465,18 @@
     -fx-font-weight: 800;
 }
 .room-card-meta { -fx-text-fill: -text-dim; -fx-font-size: 11.5px; }
+.room-card-total { -fx-text-fill: -text-dim; -fx-font-size: 12px; -fx-font-weight: bold; }
+.amenity-tag {
+    -fx-background-color: rgba(255,107,157,0.12);
+    -fx-text-fill: #FFB86B;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(255,184,107,0.25);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
 
 /* Payment options */
 .payment-option {
